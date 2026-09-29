@@ -7,9 +7,6 @@
 <title>Cornerstone Database</title>
 <link rel="preconnect" href="https://script.google.com">
 <link rel="preconnect" href="https://script.googleusercontent.com">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* Layout: sticky masthead with four tabs over a single 960px column; member details and the editor open as a sheet. */
 :root{
@@ -297,6 +294,60 @@ input[type=date],input[type=month]{width:100%;min-width:0;background:var(--surfa
 .vbtn.on{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
 .vbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .attcap{margin:0 0 6px 10px;font-weight:600}
+
+/* ---- Apple-style look and motion ---- */
+:root{
+--sys:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue","Segoe UI",Roboto,"Noto Sans",Arial,sans-serif;
+--display:var(--sys);--body:var(--sys);
+--ease:cubic-bezier(.22,1,.36,1);--spring:cubic-bezier(.32,.72,0,1);
+--shadow:0 1px 2px rgba(0,0,0,.04),0 8px 30px rgba(0,0,0,.08);
+}
+body{font-family:var(--sys);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;letter-spacing:-.011em;font-size:16px}
+h1,h2,h3,.brand h1,.pcard b,.ctitle h2,.lcard h2{font-family:var(--sys);letter-spacing:-.022em;font-weight:700}
+.brand h1{text-transform:none;letter-spacing:-.02em;font-size:22px}
+.brand small{letter-spacing:.04em}
+.top{background:color-mix(in srgb,var(--surface) 76%,transparent);-webkit-backdrop-filter:saturate(180%) blur(22px);backdrop-filter:saturate(180%) blur(22px);border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent)}
+.btn{border-radius:11px;border-color:transparent;background:color-mix(in srgb,var(--ink) 7%,transparent);font-weight:600;transition:transform .22s var(--ease),background-color .2s ease,box-shadow .2s ease,opacity .2s ease}
+.btn:hover{border-color:transparent;background:color-mix(in srgb,var(--ink) 11%,transparent)}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{background:var(--accent);filter:brightness(1.07)}
+.btn.danger{background:var(--danger-soft);border-color:transparent}
+.btn:active,.pcard:active:not(:disabled),.vbtn:active,.pick:active,.tab:active{transform:scale(.965)}
+.btn:disabled{opacity:.55}
+.tab{transition:color .25s ease,border-color .3s var(--ease),transform .2s var(--ease)}
+input[type=text],input[type=tel],input[type=email],input[type=number],input[type=search],input[type=date],input[type=month],select,textarea,.lcard input,.ucard input,.ucard select{border-radius:11px;border-color:color-mix(in srgb,var(--line) 90%,transparent);transition:border-color .2s ease,box-shadow .25s var(--ease)}
+input:focus,select:focus,textarea:focus,.lcard input:focus{outline:none!important;border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 22%,transparent)}
+.list,.panel,.mcard,.empty,.ucard,.utable{border-radius:16px;border-color:color-mix(in srgb,var(--line) 75%,transparent)}
+.list,.panel,.mcard{box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.row,.bitem,.mcard,.vbtn,.pick,.chip{transition:background-color .2s ease,transform .25s var(--ease),box-shadow .25s var(--ease),border-color .2s ease}
+.mcard:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.sheet{border-radius:22px 22px 0 0}
+@media (min-width:720px){.sheet{border-radius:22px}}
+.lcard,.pcard{border-radius:20px;border-top-width:0;box-shadow:0 20px 60px rgba(0,0,0,.28)}
+.pcard{transition:transform .35s var(--spring),box-shadow .35s var(--spring)}
+.pcard:hover:not(:disabled){transform:translateY(-4px) scale(1.015)}
+.lbtn{border-radius:12px;padding:13px 16px;font-size:16px}
+.toast{-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);background:color-mix(in srgb,var(--ink) 88%,transparent);animation:toastin .38s var(--spring) both}
+.toast[hidden]{animation:none}
+.avatar{transition:transform .25s var(--ease)}
+.row:hover .avatar{transform:scale(1.06)}
+
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@keyframes sheetin{from{opacity:0;transform:translateY(28px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes toastin{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}
+#app.fx{animation:rise .42s var(--ease) both}
+#login:not([hidden]) .lbox,#chooser:not([hidden]) .cwrap{animation:rise .5s var(--ease) both}
+#login:not([hidden]),#chooser:not([hidden]){animation:fadein .35s ease both}
+#chooser .pcard{animation:rise .55s var(--ease) both}
+#chooser .pcard:nth-child(2){animation-delay:.06s}
+#chooser .pcard:nth-child(3){animation-delay:.1s}
+#chooser .pcard:nth-child(n+4){animation-delay:.14s}
+#modal.fresh .overlay{animation:fadein .28s ease both}
+#modal.fresh .sheet{animation:sheetin .45s var(--spring) both}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+#chooser .btn{background:rgba(255,255,255,.18);color:#fff}#chooser .btn:hover{background:rgba(255,255,255,.28)}
 </style>
 </head>
 <body>
@@ -697,6 +748,8 @@ function render(){
   const tabs=[['directory','Directory',S.members.length],['birthdays','Birthdays',bc],['ministries','Ministries',0],['attendance','Attendance',0],['settings','Settings',0]];
   $('#tabs').innerHTML=tabs.map(x=>`<button class="tab" data-act="tab" data-v="${x[0]}" ${S.view===x[0]?'aria-current="page"':''}>${x[1]}${x[2]?`<span class="n">${x[2]}</span>`:''}</button>`).join('');
   const app=$('#app');
+  const fxKey=LOCKEY+'|'+S.view+'|'+S.loaded;
+  if(app._fx!==fxKey){app._fx=fxKey;app.classList.remove('fx');void app.offsetWidth;app.classList.add('fx')}
   if(!S.loaded){app.innerHTML='<p class="loading">Loading members…</p>';renderModal();return}
   if(S.view==='directory'){app.innerHTML=directoryHTML();renderList()}
   else if(S.view==='birthdays')app.innerHTML=birthdaysHTML();
@@ -833,6 +886,7 @@ function renderModal(){
   if(!m){host.innerHTML='';return}
   const prev=host.querySelector('.sheet');const st=prev?prev.scrollTop:0;
   host.innerHTML=`<div class="overlay" data-act="backdrop" ${m.type==='edit'?'data-lock="1"':''}><div class="sheet" role="dialog" aria-modal="true" tabindex="-1">${m.type==='view'?viewHTML(m):m.type==='pick'?pickHTML():editHTML(m)}</div></div>`;
+  host.classList.toggle('fresh',!prev);
   const sh=host.querySelector('.sheet');if(sh){sh.scrollTop=st;if(!prev)sh.focus()}
   if(m.focus){const el=host.querySelector(m.focus);if(el){el.focus();if(el.scrollIntoView)el.scrollIntoView({block:'center'})}m.focus=''}
 }
