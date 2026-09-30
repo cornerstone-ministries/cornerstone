@@ -492,15 +492,37 @@ function gs(fn){
     });
 }
 var OPEN_FNS={authStatus:1,login:1,setupAdmin:1};
+// Optimistic writes: apply the change locally and paint immediately, then sync
+// to the sheet in the background. If the background save fails, roll back and
+// say so — this is what makes saving/deleting feel instant instead of waiting
+// several seconds on every tap for Apps Script to respond.
 async function putMember(rec){
-  await gs('saveMember',JSON.stringify(rec));
-  const i=S.members.findIndex(m=>m.id===rec.id);if(i>=0)S.members[i]=rec;else S.members.push(rec);render();
+  const i=S.members.findIndex(m=>m.id===rec.id);
+  const prev=i>=0?S.members[i]:null;
+  if(i>=0)S.members[i]=rec;else S.members.push(rec);
+  saveCache_();render();
+  gs('saveMember',JSON.stringify(rec)).catch(function(e){
+    const j=S.members.findIndex(m=>m.id===rec.id);
+    if(prev){if(j>=0)S.members[j]=prev}else if(j>=0)S.members.splice(j,1);
+    saveCache_();render();
+    toast('Could not save '+fullName(rec)+'. '+errText(e));
+  });
 }
 async function removeMember(id){
-  await gs('deleteMember',id);S.members=S.members.filter(m=>m.id!==id);render();
+  const i=S.members.findIndex(m=>m.id===id);
+  const prev=i>=0?S.members[i]:null;
+  if(i>=0)S.members.splice(i,1);
+  saveCache_();render();
+  gs('deleteMember',id).catch(function(e){
+    if(prev){S.members.splice(i,0,prev);saveCache_();render()}
+    toast('Could not delete. '+errText(e));
+  });
 }
 async function putSettings(){
-  await gs('saveSettings',JSON.stringify(S.settings));render();
+  render();saveCache_();
+  gs('saveSettings',JSON.stringify(S.settings)).catch(function(e){
+    toast('Could not save settings. '+errText(e));
+  });
 }
 function cacheKey_(){return 'cdb_cache_'+LOCKEY}
 function loadCache_(){
@@ -844,9 +866,16 @@ function attendanceHTML(){
    +'<p class="sub">Saving the same date and service again replaces the earlier number. To keep a soft copy, choose &ldquo;Save as PDF&rdquo; when printing.</p></form>';
   return h;
 }
+function attCacheKey_(){return 'cdb_attcache_'+LOCKEY}
+function loadAttCache_(){try{var raw=localStorage.getItem(attCacheKey_());var d=raw&&JSON.parse(raw);return Array.isArray(d)?d:null}catch(e){return null}}
+function saveAttCache_(){try{localStorage.setItem(attCacheKey_(),JSON.stringify(ATT.rows))}catch(e){}}
 async function loadAtt(){
-  try{ATT.rows=JSON.parse(await gs('getAttendance'));ATT.loaded=true;ATT.err=''}
-  catch(e){ATT.err=errText(e)}
+  if(!ATT.loaded){ // paint last-known attendance instantly, then quietly refresh
+    const cached=loadAttCache_();
+    if(cached){ATT.rows=cached;ATT.loaded=true;ATT.err='';if(S.view==='attendance')render();checkAutoInactive()}
+  }
+  try{ATT.rows=JSON.parse(await gs('getAttendance'));ATT.loaded=true;ATT.err='';saveAttCache_()}
+  catch(e){if(!ATT.loaded)ATT.err=errText(e)}
   if(S.view==='attendance')render();
   checkAutoInactive();
 }
@@ -930,8 +959,15 @@ document.addEventListener('click',async function(e){
     var key=d+'|'+s;
     if(AU.armed!==key){AU.armed=key;render();setTimeout(function(){if(AU.armed===key){AU.armed='';if(S.view==='attendance')render()}},4000);return}
     AU.armed='';
-    try{await gs('deleteAttendance',d,s);ATT.rows=ATT.rows.filter(function(x){return !(x.d===d&&x.s===s)});toast('Deleted');render()}
-    catch(ex){toast(errText(ex));render()}
+    var delIdx=-1,delRow=null;
+    ATT.rows.forEach(function(x,j){if(x.d===d&&x.s===s){delIdx=j;delRow=x}});
+    ATT.rows=ATT.rows.filter(function(x){return !(x.d===d&&x.s===s)});
+    saveAttCache_();toast('Deleted');render();
+    gs('deleteAttendance',d,s).then(function(){saveAttCache_()}).catch(function(ex){
+      if(delRow)ATT.rows.splice(Math.min(delIdx,ATT.rows.length),0,delRow);
+      saveAttCache_();if(S.view==='attendance')render();
+      toast('Could not delete. '+errText(ex));
+    });
   }
 });
 document.addEventListener('submit',async function(e){
@@ -949,26 +985,31 @@ document.addEventListener('submit',async function(e){
   }
   var visCount=AF.v===''?0:+AF.v;
   if(VISITORS.length&&!AU.edit)visCount=Math.max(visCount,VISITORS.length);
-  try{
-    await gs('saveAttendance',JSON.stringify({d:d,s:s,n:+n,v:visCount,note:visNote,cl:AF.cl.join(',')}));
-    var rec={d:d,s:s,n:Math.round(+n),v:visCount,note:visNote,cl:AF.cl.join(',')},i=-1;
-    ATT.rows.forEach(function(r,j){if(r.d===d&&r.s===s)i=j});
-    if(i>=0)ATT.rows[i]=rec;else ATT.rows.push(rec);
-    // Auto-save visitors as members with Visitor status
-    if(VISITORS.length&&!AU.edit){
-      for(var vi=0;vi<VISITORS.length;vi++){
-        var vr=VISITORS[vi];
-        var exists=S.members.some(function(m){return fullName(m).toLowerCase()===vr.name.toLowerCase()&&m.status==='Visitor'});
-        if(!exists){
-          var vm={id:uid('m'),first:vr.name.split(' ')[0]||vr.name,last:vr.name.split(' ').slice(1).join(' ')||'',status:'Visitor',phone:vr.phone||'',email:'',address:'',birthday:{m:0,d:0},ministries:[],notes:vr.notes?vr.notes+' ('+atLong(d)+')':'Visited on '+atLong(d),family:[],gender:'',nationality:'',dateBaptism:'',dateJoined:'',socialMedia:[]};
-          try{await putMember(vm)}catch(vex){}
-        }
+  var rec={d:d,s:s,n:Math.round(+n),v:visCount,note:visNote,cl:AF.cl.join(',')},i=-1;
+  ATT.rows.forEach(function(r,j){if(r.d===d&&r.s===s)i=j});
+  var prevRow=i>=0?ATT.rows[i]:null;
+  if(i>=0)ATT.rows[i]=rec;else ATT.rows.push(rec);
+  saveAttCache_();
+  const wasVisitors=VISITORS.slice(),wasEdit=AU.edit;
+  var rg=atRange();
+  AF.n='';AF.v='';AF.note='';AF.cl=[];VISITORS=[];VFORM={show:false,name:'',phone:'',notes:''};AU.edit=false;render();
+  toast((d<rg.f||d>rg.t)?'Saved. That date is outside the period shown above.':'Saved');
+  gs('saveAttendance',JSON.stringify(rec)).then(function(){saveAttCache_()}).catch(function(ex){
+    var j=-1;ATT.rows.forEach(function(r,k){if(r.d===d&&r.s===s)j=k});
+    if(prevRow){if(j>=0)ATT.rows[j]=prevRow}else if(j>=0)ATT.rows.splice(j,1);
+    saveAttCache_();if(S.view==='attendance')render();
+    toast('Could not save attendance. '+errText(ex));
+  });
+  // Auto-save visitors as members with Visitor status (each saves optimistically on its own)
+  if(wasVisitors.length&&!wasEdit){
+    wasVisitors.forEach(function(vr){
+      var exists=S.members.some(function(m){return fullName(m).toLowerCase()===vr.name.toLowerCase()&&m.status==='Visitor'});
+      if(!exists){
+        var vm={id:uid('m'),first:vr.name.split(' ')[0]||vr.name,last:vr.name.split(' ').slice(1).join(' ')||'',status:'Visitor',phone:vr.phone||'',email:'',address:'',birthday:{m:0,d:0},ministries:[],notes:vr.notes?vr.notes+' ('+atLong(d)+')':'Visited on '+atLong(d),family:[],gender:'',nationality:'',dateBaptism:'',dateJoined:'',socialMedia:[]};
+        putMember(vm);
       }
-    }
-    var rg=atRange();
-    AF.n='';AF.v='';AF.note='';AF.cl=[];VISITORS=[];VFORM={show:false,name:'',phone:'',notes:''};AU.edit=false;render();
-    toast((d<rg.f||d>rg.t)?'Saved. That date is outside the period shown above.':'Saved');
-  }catch(ex){toast(errText(ex))}
+    });
+  }
 });
 
 /* ---------- rendering ---------- */
