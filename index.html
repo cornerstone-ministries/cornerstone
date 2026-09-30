@@ -426,6 +426,7 @@ html{scroll-behavior:smooth}
 <script>
 (function(){
 'use strict';
+document.addEventListener('touchstart',function(){},{passive:true}); // enables :active/tap animations on iOS Safari & mobile browsers
 const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const MS=MONTHS.map(m=>m.slice(0,3));
 const REL=['Spouse','Child','Parent','Sibling','Grandparent','Grandchild','Other'];
