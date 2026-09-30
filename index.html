@@ -808,7 +808,7 @@ function attendanceHTML(){
    +'<div class="cl-toolbar"><input type="search" id="acsQ" placeholder="Search members…" value="'+esc(ACS.q)+'" aria-label="Search members">'
    +'<select id="acsFMin" aria-label="Filter by ministry"><option value="">All ministries</option>'+allMinistries().map(function(x){return '<option '+(ACS.fMin===x?'selected':'')+'>'+esc(x)+'</option>'}).join('')+'</select>'
    +'<select id="acsFStatus" aria-label="Filter by status"><option value="">All statuses</option>'+STATUS.map(function(x){return '<option '+(ACS.fStatus===x?'selected':'')+'>'+x+'</option>'}).join('')+'</select>'
-   +'<button type="button" class="btn small'+(ACS.byFamily?' on':'')+'" data-att="toggleFamilyView" aria-pressed="'+!!ACS.byFamily+'">Per family</button>'
+   +'<button type="button" class="btn small'+(ACS.byFamily?' on':'')+'" data-att="toggleFamilyView" aria-pressed="'+!!ACS.byFamily+'">Family Name</button>'
    +'<button type="button" class="btn small" data-att="checkAll">Check all visible</button>'
    +'<button type="button" class="btn small" data-att="uncheckAll">Uncheck all</button></div>'
    +'<div class="cl-rows" id="clRows">'+clRowsHTML()+'</div></details>'
