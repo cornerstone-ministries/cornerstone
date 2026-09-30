@@ -314,10 +314,11 @@ input[type=date],input[type=month]{width:100%;min-width:0;background:var(--surfa
 .cl-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);flex:none}
 .cl-count{font-size:13px;color:var(--muted);margin:4px 0 0}
 .cl-fam:not(:last-child){border-bottom:2px solid var(--line)}
-.cl-famhead{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--accent-soft)}
+.cl-famhead{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--accent-soft);cursor:pointer;user-select:none}
 .cl-famhead b{flex:none;font-family:var(--display)}
 .cl-famhead .sub{flex:1;font-size:12px}
-.cl-famhead .btn{padding:3px 9px;font-size:11px}
+.cl-famhead .btn{padding:3px 9px;font-size:11px;flex:none}
+.cl-caret{flex:none;color:var(--accent);font-size:11px;width:10px;display:inline-block}
 .cl-fam .cl-row{padding-left:24px}
 /* badge */
 .badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;text-transform:uppercase;letter-spacing:.04em}
@@ -623,7 +624,7 @@ var ATT={rows:[],loaded:false,err:''};
 var AU={mode:'month',month:'',week:'',n:8,from:'',to:'',svc:'both',view:'members',edit:false,armed:''};
 var AF={d:'',s:'Sunday AM Service',n:'',v:'',note:'',cl:[]};
 var SVCS=['Sunday AM Service','Sunday PM Service','Prayer Meeting'];
-var ACS={q:'',fMin:'',fStatus:'',byFamily:false};
+var ACS={q:'',fMin:'',fStatus:'',byFamily:false,openFam:{}};
 var VISITORS=[];
 var VFORM={show:false,name:'',phone:'',notes:''};
 var DOWS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -749,9 +750,13 @@ function clRowsHTML(){
   if(!groups.length)return '';
   return groups.map(function(g){
     var allOn=g.members.every(function(m){return AF.cl.indexOf(m.id)>=0});
-    return '<div class="cl-fam"><div class="cl-famhead"><b>'+esc(g.name)+'</b><span class="sub">'+g.members.length+' member'+(g.members.length>1?'s':'')+'</span>'
+    var onCount=g.members.filter(function(m){return AF.cl.indexOf(m.id)>=0}).length;
+    var open=!!ACS.openFam[g.name];
+    return '<div class="cl-fam">'
+     +'<div class="cl-famhead" data-att="toggleFamOpen" data-fam="'+esc(g.name)+'"><span class="cl-caret">'+(open?'&#9662;':'&#9656;')+'</span><b>'+esc(g.name)+'</b>'
+     +'<span class="sub">'+g.members.length+' member'+(g.members.length>1?'s':'')+(onCount?', '+onCount+' checked':'')+'</span>'
      +'<button type="button" class="btn small" data-att="checkFamily" data-fam="'+esc(g.name)+'">'+(allOn?'Uncheck family':'Check family')+'</button></div>'
-     +g.members.map(clRowHTML).join('')+'</div>';
+     +(open?g.members.map(clRowHTML).join(''):'')+'</div>';
   }).join('');
 }
 function renderAttChecklist(){
@@ -877,6 +882,7 @@ document.addEventListener('click',async function(e){
   if(a==='checkAll'){attFilteredMembers().forEach(function(m){if(AF.cl.indexOf(m.id)<0)AF.cl.push(m.id)});var nf=$('#afN');if(nf&&!AU.edit){nf.value=AF.cl.length;AF.n=String(AF.cl.length)}render();return}
   if(a==='uncheckAll'){AF.cl=[];var nf2=$('#afN');if(nf2&&!AU.edit){nf2.value='0';AF.n='0'}render();return}
   if(a==='toggleFamilyView'){ACS.byFamily=!ACS.byFamily;render();return}
+  if(a==='toggleFamOpen'){ACS.openFam[el.dataset.fam]=!ACS.openFam[el.dataset.fam];renderAttChecklist();return}
   if(a==='checkFamily'){
     var fam=el.dataset.fam,members=attFamilyGroups().filter(function(g){return g.name===fam})[0];
     if(!members)return;
