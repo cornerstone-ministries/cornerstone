@@ -502,14 +502,28 @@ async function removeMember(id){
 async function putSettings(){
   await gs('saveSettings',JSON.stringify(S.settings));render();
 }
+function cacheKey_(){return 'cdb_cache_'+LOCKEY}
+function loadCache_(){
+  try{
+    var raw=localStorage.getItem(cacheKey_());
+    if(!raw)return null;
+    var d=JSON.parse(raw);
+    if(!d||!Array.isArray(d.members))return null;
+    return d;
+  }catch(e){return null}
+}
+function saveCache_(){
+  try{localStorage.setItem(cacheKey_(),JSON.stringify({members:S.members,settings:S.settings}))}catch(e){}
+}
 async function reload(){
   const d=JSON.parse(await gs('getAll'));
   S.members=d.members||[];
   if(d.settings)S.settings={church:d.settings.church||'Cornerstone',ministries:Array.isArray(d.settings.ministries)?d.settings.ministries:DEFAULT_MIN.slice()};
   S.loaded=true;S.mode='sheet';S.err='';render();
+  saveCache_();
 }
 async function initStore(){
-  try{await reload()}catch(e){S.loaded=true;S.mode='error';S.err=e.message||'Unknown error';render()}
+  try{await reload()}catch(e){if(!S.loaded){S.loaded=true;S.mode='error';S.err=e.message||'Unknown error';render()}}
   setInterval(()=>{
     const a=document.activeElement&&document.activeElement.tagName;
     if(S.modal||a==='INPUT'||a==='TEXTAREA'||a==='SELECT'||document.hidden)return;
@@ -606,8 +620,14 @@ function startApp(){
 function enterPlace(key,name){
   clearPlace();LOCKEY=key;LOCNAME=name;
   S.settings={church:name,ministries:DEFAULT_MIN.slice()};S.q='';S.fMin='';S.fStatus='';
+  var cached=loadCache_(); // show last-known members instantly while we quietly refresh
+  if(cached){
+    S.members=cached.members;
+    if(cached.settings)S.settings=cached.settings;
+    S.loaded=true;S.mode='sheet';S.err='';
+  }
   hideChooser();renderWho();render();
-  if(started){reload().catch(function(e){toast(errText(e))})}else{started=true;initStore()}
+  if(started){reload().catch(function(e){if(!cached)toast(errText(e))})}else{started=true;initStore()}
 }
 document.addEventListener('click',function(e){
   var el=e.target.closest('[data-pick],[data-church],[data-uact="switch"]');if(!el||el.disabled)return;
@@ -1404,10 +1424,12 @@ document.addEventListener('change',e=>{
       img.onload=function(){
         // Pick the highest resolution/quality that still fits safely inside a
         // Google Sheets cell (~50,000 char hard limit) alongside the rest of
-        // the member record. Try large+sharp first, step down only as needed.
-        const BUDGET=42000,w=img.width,h=img.height;
+        // the member record. Kept modest on purpose: every member's photo is
+        // downloaded on every directory load, so a bigger budget here means a
+        // slower load for everyone, especially churches with many members.
+        const BUDGET=20000,w=img.width,h=img.height;
         let data='';
-        for(let dim=1000;dim>=200 && !data;dim-=100){
+        for(let dim=640;dim>=200 && !data;dim-=100){
           let nw=w,nh=h;
           if(w>dim||h>dim){if(w>h){nw=dim;nh=Math.round(h*dim/w)}else{nh=dim;nw=Math.round(w*dim/h)}}
           const c=document.createElement('canvas');c.width=nw;c.height=nh;
