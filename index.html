@@ -384,6 +384,28 @@ input:focus,select:focus,textarea:focus,.lcard input:focus{outline:none!importan
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 #chooser .btn{background:rgba(255,255,255,.18);color:#fff}#chooser .btn:hover{background:rgba(255,255,255,.28)}
+/* attendance checklist search & visitor */
+.cl-toolbar{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);align-items:center}
+.cl-toolbar input[type=search]{flex:1 1 160px;min-width:0;padding:7px 10px;font-size:13px;border-radius:9px}
+.cl-toolbar select{width:auto;flex:0 1 140px;padding:7px 10px;font-size:13px;border-radius:9px}
+.cl-toolbar .btn{padding:6px 12px;font-size:13px}
+.visitor-panel{border:1px solid var(--line);border-radius:12px;padding:14px;margin:10px 0;background:var(--accent-soft)}
+.visitor-panel h4{margin:0 0 10px;font-size:14px;font-weight:700;color:var(--accent)}
+.visitor-panel .vrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:10px}
+.visitor-panel .vrow input{padding:8px 10px;font-size:13px}
+.visitor-panel .vacts{display:flex;gap:8px;flex-wrap:wrap}
+.visitor-list{margin:8px 0 0;display:flex;flex-direction:column;gap:4px}
+.visitor-list .vitem{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-size:13px}
+.visitor-list .vitem .vname{font-weight:600}
+.visitor-list .vitem .btn{padding:3px 8px;font-size:11px}
+/* profile picture */
+.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.avatar.lg img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.photo-upload{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:14px}
+.photo-preview{width:80px;height:80px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700;font-size:28px;overflow:hidden;border:2px solid var(--line)}
+.photo-preview img{width:100%;height:100%;object-fit:cover}
+.photo-acts{display:flex;gap:8px;flex-wrap:wrap}
+.photo-acts .btn{padding:5px 10px;font-size:12px}
 </style>
 </head>
 <body>
@@ -424,6 +446,8 @@ const uid=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const byId=id=>S.members.find(m=>m.id===id);
 const fullName=m=>((m&&m.first||'')+' '+(m&&m.last||'')).trim()||'Unnamed';
 const initials=m=>((m.first||'?')[0]+(m.last||'')[0]||'').toUpperCase();
+function memberPhoto(m){return m&&m._photo||''}
+function avatarHTML(m,lg){var cls=lg?'avatar lg':'avatar';var ph=memberPhoto(m);if(ph)return '<span class="'+cls+'" aria-hidden="true"><img src="'+esc(ph)+'" alt="'+esc(fullName(m))+'"></span>';return '<span class="'+cls+'" aria-hidden="true">'+esc(initials(m))+'</span>'}
 const validB=b=>b&&b.m>0&&b.d>0;
 const leap=y=>y%4===0&&(y%100!==0||y%400===0);
 const today=()=>{const t=new Date();return new Date(t.getFullYear(),t.getMonth(),t.getDate())};
@@ -586,6 +610,9 @@ var ATT={rows:[],loaded:false,err:''};
 var AU={mode:'month',month:'',week:'',n:8,from:'',to:'',svc:'both',view:'members',edit:false,armed:''};
 var AF={d:'',s:'Sunday AM Service',n:'',v:'',note:'',cl:[]};
 var SVCS=['Sunday AM Service','Sunday PM Service','Prayer Meeting'];
+var ACS={q:'',fMin:'',fStatus:''};
+var VISITORS=[];
+var VFORM={show:false,name:'',phone:'',notes:''};
 var DOWS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 function atVal(r){return AU.view==='visitors'?(r.v||0):AU.view==='total'?r.n+(r.v||0):r.n}
 function atViewName(){return AU.view==='visitors'?'Visitors only':AU.view==='total'?'Total attendance (members + visitors)':'Members / regular attendees'}
@@ -680,6 +707,21 @@ function atStatCard(name,s,cls){
    +'<dt>Average ('+atViewShort()+')</dt><dd>'+s.avg+'</dd>'
    +'<dt>Highest ('+atViewShort()+')</dt><dd>'+s.mx.n+' <small>('+atFmt(s.mx.d)+')</small></dd><dt>Lowest ('+atViewShort()+')</dt><dd>'+s.mn.n+' <small>('+atFmt(s.mn.d)+')</small></dd></dl></div>';
 }
+function attFilteredMembers(){
+  var q=ACS.q.trim().toLowerCase();
+  return sortedMembers().filter(function(m){
+    if(m.status==='Transferred')return false;
+    if(ACS.fMin&&!(m.ministries||[]).includes(ACS.fMin))return false;
+    if(ACS.fStatus&&m.status!==ACS.fStatus)return false;
+    if(!q)return true;
+    var hay=[fullName(m),m.phone||'',m.email||'',(m.ministries||[]).join(' ')].join(' ').toLowerCase();
+    return hay.includes(q);
+  });
+}
+function renderAttChecklist(){
+  var rows=$('#clRows');if(!rows)return;
+  rows.innerHTML=attFilteredMembers().map(function(m){return '<label class="cl-row"><input type="checkbox" data-cl="'+esc(m.id)+'" '+(AF.cl.indexOf(m.id)>=0?'checked':'')+'><span>'+esc(fullName(m))+'</span><small style="color:var(--muted);font-size:11px;margin-left:auto">'+esc((m.ministries||[]).slice(0,2).join(', '))+'</small></label>'}).join('');
+}
 function attendanceHTML(){
   if(!ATT.loaded)return '<p class="loading">'+(ATT.err?'Could not load attendance: '+esc(ATT.err):'Loading attendance…')+'</p>';
   if(!AF.d)AF.d=atYmd(new Date());
@@ -721,8 +763,22 @@ function attendanceHTML(){
    +'<label class="field"><span>Visitors</span><input type="number" id="afV" min="0" step="1" inputmode="numeric" value="'+esc(AF.v)+'" placeholder="0"></label>'
    +'<label class="field"><span>Notes (optional)</span><input type="text" id="afNote" maxlength="300" value="'+esc(AF.note)+'"></label>'
    +'<div class="arecbtn"><button class="btn primary" type="submit">'+(AU.edit?'Save changes':'Save')+'</button>'+(AU.edit?' <button class="btn" type="button" data-att="cancel">Cancel</button>':'')+'</div></div>'
-   +(S.members.length?'<details class="checklist"><summary class="lbl">Member checklist <span class="cl-count">'+AF.cl.length+' checked</span></summary><div class="cl-rows">'
-   +sortedMembers().filter(function(m){return m.status!=='Transferred'}).map(function(m){return '<label class="cl-row"><input type="checkbox" data-cl="'+esc(m.id)+'" '+(AF.cl.indexOf(m.id)>=0?'checked':'')+'>'+esc(fullName(m))+'</label>'}).join('')+'</div></details>':'')
+   +(S.members.length?'<details class="checklist" id="attChecklist" open><summary class="lbl">Member checklist <span class="cl-count">'+AF.cl.length+' checked</span></summary>'
+   +'<div class="cl-toolbar"><input type="search" id="acsQ" placeholder="Search members…" value="'+esc(ACS.q)+'" aria-label="Search members">'
+   +'<select id="acsFMin" aria-label="Filter by ministry"><option value="">All ministries</option>'+allMinistries().map(function(x){return '<option '+(ACS.fMin===x?'selected':'')+'>'+esc(x)+'</option>'}).join('')+'</select>'
+   +'<select id="acsFStatus" aria-label="Filter by status"><option value="">All statuses</option>'+STATUS.filter(function(x){return x!=='Transferred'}).map(function(x){return '<option '+(ACS.fStatus===x?'selected':'')+'>'+x+'</option>'}).join('')+'</select>'
+   +'<button type="button" class="btn small" data-att="checkAll">Check all visible</button>'
+   +'<button type="button" class="btn small" data-att="uncheckAll">Uncheck all</button></div>'
+   +'<div class="cl-rows" id="clRows">'+attFilteredMembers().map(function(m){return '<label class="cl-row"><input type="checkbox" data-cl="'+esc(m.id)+'" '+(AF.cl.indexOf(m.id)>=0?'checked':'')+'><span>'+esc(fullName(m))+'</span><small style="color:var(--muted);font-size:11px;margin-left:auto">'+esc((m.ministries||[]).slice(0,2).join(', '))+'</small></label>'}).join('')+'</div></details>'
+   +'<div style="margin:10px 0"><button type="button" class="btn" data-att="toggleVisitor" style="background:var(--gold-soft);color:var(--gold);border-color:var(--gold-solid);font-weight:700">&#128100; Visitor</button>'
+   +(VISITORS.length?' <span class="sub">'+VISITORS.length+' visitor'+(VISITORS.length>1?'s':'')+' added</span>':'')+'</div>'
+   +(VFORM.show?'<div class="visitor-panel"><h4>Add Visitor</h4><div class="vrow">'
+   +'<label class="field"><span>Name</span><input type="text" id="vfName" value="'+esc(VFORM.name)+'" placeholder="Visitor\'s name"></label>'
+   +'<label class="field"><span>Phone (optional)</span><input type="tel" id="vfPhone" value="'+esc(VFORM.phone)+'" placeholder="Phone number"></label>'
+   +'<label class="field"><span>Notes (optional)</span><input type="text" id="vfNotes" value="'+esc(VFORM.notes)+'" placeholder="e.g. First time, invited by…"></label></div>'
+   +'<div class="vacts"><button type="button" class="btn primary small" data-att="addVisitor">Add visitor</button><button type="button" class="btn small" data-att="cancelVisitor">Cancel</button></div></div>':'')
+   +(VISITORS.length?'<div class="visitor-list">'+VISITORS.map(function(v,i){return '<div class="vitem"><span><span class="vname">'+esc(v.name)+'</span>'+(v.phone?' &middot; '+esc(v.phone):'')+(v.notes?' &middot; <em>'+esc(v.notes)+'</em>':'')+'</span><button type="button" class="btn small danger" data-att="delVisitor" data-vi="'+i+'">Remove</button></div>'}).join('')+'</div>':'')
+   :'')
    +'<p class="sub">Saving the same date and service again replaces the earlier number. To keep a soft copy, choose &ldquo;Save as PDF&rdquo; when printing.</p></form>';
   return h;
 }
@@ -756,17 +812,33 @@ document.addEventListener('change',function(e){
 document.addEventListener('input',function(e){
   var id=e.target.id;
   if(id==='afD')AF.d=e.target.value;else if(id==='afS')AF.s=e.target.value;else if(id==='afN')AF.n=e.target.value;else if(id==='afV')AF.v=e.target.value;else if(id==='afNote')AF.note=e.target.value;
-  if(e.target.dataset&&e.target.dataset.cl){var mid=e.target.dataset.cl;if(e.target.checked){if(AF.cl.indexOf(mid)<0)AF.cl.push(mid)}else{AF.cl=AF.cl.filter(function(x){return x!==mid})}var cc=document.querySelector('.cl-count');if(cc)cc.textContent=AF.cl.length+' checked'}
+  if(id==='vfName')VFORM.name=e.target.value;else if(id==='vfPhone')VFORM.phone=e.target.value;else if(id==='vfNotes')VFORM.notes=e.target.value;
+  if(e.target.dataset&&e.target.dataset.cl){var mid=e.target.dataset.cl;if(e.target.checked){if(AF.cl.indexOf(mid)<0)AF.cl.push(mid)}else{AF.cl=AF.cl.filter(function(x){return x!==mid})}var cc=document.querySelector('.cl-count');if(cc)cc.textContent=AF.cl.length+' checked';var nf=$('#afN');if(nf&&!AU.edit)nf.value=AF.cl.length;AF.n=String(AF.cl.length)}
+  if(id==='acsQ'){ACS.q=e.target.value;renderAttChecklist()}
 });
 document.addEventListener('change',function(e){
   var id=e.target.id;
   if(id==='afD')AF.d=e.target.value;else if(id==='afS')AF.s=e.target.value;
+  if(id==='acsFMin'){ACS.fMin=e.target.value;renderAttChecklist()}
+  if(id==='acsFStatus'){ACS.fStatus=e.target.value;renderAttChecklist()}
 });
 document.addEventListener('click',async function(e){
   var el=e.target.closest('[data-att]');if(!el)return;
   var a=el.dataset.att,d=el.dataset.d,s=el.dataset.s,td=atYmd(new Date());
   if(a==='view'){AU.view=el.dataset.v;render();return}
   if(a==='print'){try{window.print()}catch(x){toast('Press Ctrl+P to print')}return}
+  if(a==='toggleVisitor'){VFORM.show=!VFORM.show;render();return}
+  if(a==='addVisitor'){
+    if(!VFORM.name.trim()){toast('Enter the visitor\'s name');return}
+    VISITORS.push({name:VFORM.name.trim(),phone:VFORM.phone.trim(),notes:VFORM.notes.trim()});
+    VFORM.name='';VFORM.phone='';VFORM.notes='';
+    var vf=$('#afV');if(vf){vf.value=String(VISITORS.length);AF.v=String(VISITORS.length)}
+    toast('Visitor added');render();return;
+  }
+  if(a==='cancelVisitor'){VFORM.show=false;VFORM.name='';VFORM.phone='';VFORM.notes='';render();return}
+  if(a==='delVisitor'){VISITORS.splice(+el.dataset.vi,1);var vf2=$('#afV');if(vf2){vf2.value=String(VISITORS.length);AF.v=String(VISITORS.length)}render();return}
+  if(a==='checkAll'){attFilteredMembers().forEach(function(m){if(AF.cl.indexOf(m.id)<0)AF.cl.push(m.id)});var nf=$('#afN');if(nf&&!AU.edit){nf.value=AF.cl.length;AF.n=String(AF.cl.length)}render();return}
+  if(a==='uncheckAll'){AF.cl=[];var nf2=$('#afN');if(nf2&&!AU.edit){nf2.value='0';AF.n='0'}render();return}
   if(a==='prev'||a==='next'){
     var dir=a==='next'?1:-1;
     if(AU.mode==='month'){var m=(AU.month||td.slice(0,7)).split('-');var nd=new Date(+m[0],+m[1]-1+dir,1);AU.month=nd.getFullYear()+'-'+atPad(nd.getMonth()+1)}
@@ -794,13 +866,32 @@ document.addEventListener('submit',async function(e){
   if(!d){toast('Please choose the date');return}
   if(n===''||isNaN(+n)||+n<0){toast('Please enter how many members / regular attendees');return}
   if(AF.v!==''&&(isNaN(+AF.v)||+AF.v<0)){toast('Please enter a valid number of visitors');return}
+  // Build visitor names into the note
+  var visNote=AF.note||'';
+  if(VISITORS.length&&!AU.edit){
+    var vnames=VISITORS.map(function(v){return v.name+(v.phone?' ('+v.phone+')':'')}).join(', ');
+    visNote=(visNote?visNote+' | ':'')+'Visitors: '+vnames;
+  }
+  var visCount=AF.v===''?0:+AF.v;
+  if(VISITORS.length&&!AU.edit)visCount=Math.max(visCount,VISITORS.length);
   try{
-    await gs('saveAttendance',JSON.stringify({d:d,s:s,n:+n,v:AF.v===''?0:+AF.v,note:AF.note,cl:AF.cl.join(',')}));
-    var rec={d:d,s:s,n:Math.round(+n),v:AF.v===''?0:Math.round(+AF.v),note:AF.note||'',cl:AF.cl.join(',')},i=-1;
+    await gs('saveAttendance',JSON.stringify({d:d,s:s,n:+n,v:visCount,note:visNote,cl:AF.cl.join(',')}));
+    var rec={d:d,s:s,n:Math.round(+n),v:visCount,note:visNote,cl:AF.cl.join(',')},i=-1;
     ATT.rows.forEach(function(r,j){if(r.d===d&&r.s===s)i=j});
     if(i>=0)ATT.rows[i]=rec;else ATT.rows.push(rec);
+    // Auto-save visitors as members with Visitor status
+    if(VISITORS.length&&!AU.edit){
+      for(var vi=0;vi<VISITORS.length;vi++){
+        var vr=VISITORS[vi];
+        var exists=S.members.some(function(m){return fullName(m).toLowerCase()===vr.name.toLowerCase()&&m.status==='Visitor'});
+        if(!exists){
+          var vm={id:uid('m'),first:vr.name.split(' ')[0]||vr.name,last:vr.name.split(' ').slice(1).join(' ')||'',status:'Visitor',phone:vr.phone||'',email:'',address:'',birthday:{m:0,d:0},ministries:[],notes:vr.notes?vr.notes+' ('+atLong(d)+')':'Visited on '+atLong(d),family:[],gender:'',nationality:'',dateBaptism:'',dateJoined:'',socialMedia:[]};
+          try{await putMember(vm)}catch(vex){}
+        }
+      }
+    }
     var rg=atRange();
-    AF.n='';AF.v='';AF.note='';AF.cl=[];AU.edit=false;render();
+    AF.n='';AF.v='';AF.note='';AF.cl=[];VISITORS=[];VFORM={show:false,name:'',phone:'',notes:''};AU.edit=false;render();
     toast((d<rg.f||d>rg.t)?'Saved. That date is outside the period shown above.':'Saved');
   }catch(ex){toast(errText(ex))}
 });
@@ -811,7 +902,7 @@ function render(){
   document.title=(S.settings.church||'Church')+' Directory';
   const t=today(),cm=t.getMonth()+1;
   const bc=birthdayEvents().filter(e=>e.b.m===cm).length;
-  const tabs=[['directory','Directory',S.members.length],['birthdays','Birthdays',bc],['ministries','Ministries',0],['attendance','Attendance',0],['demographics','Demographics',0],['settings','Settings',0]];
+  const tabs=[['demographics','Demographics',0],['directory','Directory',S.members.length],['ministries','Ministries',0],['birthdays','Birthdays',bc],['attendance','Attendance',0],['settings','Settings',0]];
   $('#tabs').innerHTML=tabs.map(x=>`<button class="tab" data-act="tab" data-v="${x[0]}" ${S.view===x[0]?'aria-current="page"':''}>${x[1]}${x[2]?`<span class="n">${x[2]}</span>`:''}</button>`).join('');
   const app=$('#app');
   const fxKey=LOCKEY+'|'+S.view+'|'+S.loaded;
@@ -871,7 +962,7 @@ function renderList(){
     const statusLabel=m.status+(m._autoInactive?' (Auto-inactive)':'');
     const meta=[statusLabel,m.phone].filter(Boolean).map(esc).join(' · ');
     return `<button class="row" data-act="open" data-id="${esc(m.id)}">
-      <span class="avatar" aria-hidden="true">${esc(initials(m))}</span>
+      ${avatarHTML(m)}
       <span class="who"><b>${esc(fullName(m))}${m.sample?' <span class="chip plain">Sample</span>':''}</b><span>${meta||'&nbsp;'}</span>
       ${mins.length?`<span class="chips">${mins.slice(0,3).map(x=>`<span class="chip">${esc(x)}</span>`).join('')}${mins.length>3?`<span class="chip plain">+${mins.length-3}</span>`:''}</span>`:''}</span>
       <span class="bd">${validB(m.birthday)?esc(bText(m.birthday)):''}</span></button>`;
@@ -992,7 +1083,7 @@ function dashboardHTML(){
   if(S.dashAtt)attRows=S.dashAtt;
   var total=attRows.length;
   var lastSvc=total?attRows.sort(function(a,b){return a.d>b.d?-1:1})[0]:'';
-  return '<div class="shead"><span class="avatar lg" aria-hidden="true">'+esc(initials(x))+'</span>'
+  return '<div class="shead">'+avatarHTML(x,true)
     +'<div><h2>'+esc(fullName(x))+'</h2><div class="sub">'+esc(x.status||'')+(age!==null?' · Age '+age:'')+'</div></div>'
     +'<button class="btn small" data-act="closeDash">Back to Directory</button></div>'
     +'<div class="dash-stats"><div class="dash-stat"><b>'+total+'</b><span>Services attended</span></div>'
@@ -1039,7 +1130,7 @@ function viewHTML(m){
   const statusBadge=x.status==='Inactive'?' <span class="badge inactive">Inactive</span>':x.status==='Transferred'?' <span class="badge transferred">Transferred</span>':'';
   const facts=[['Status',x.status],['Gender',x.gender],['Birthday',validB(x.birthday)?bText(x.birthday,true)+(x.birthday.y?'':' (year not saved)'):''],['Nationality',x.nationality],['Phone',x.phone],['Email',x.email],['Address',x.address],['Date of Baptism',dateStr(x.dateBaptism)],['Date Joined',dateStr(x.dateJoined)]].filter(r=>r[1]);
   const fam=(x.family||[]);
-  return `<div class="shead"><span class="avatar lg" aria-hidden="true">${esc(initials(x))}</span>
+  return `<div class="shead">${avatarHTML(x,true)}
     <div><h2>${esc(fullName(x))}${statusBadge}</h2>${x.sample?'<span class="chip plain">Sample</span>':''}<div class="sub">${age?esc(age.slice(3)):''}</div></div>
     <button class="x" data-act="close" aria-label="Close">×</button></div>
   ${facts.length?`<dl class="facts">${facts.map(r=>`<dt>${r[0]}</dt><dd>${esc(r[1])}</dd>`).join('')}</dl>`:''}
@@ -1057,7 +1148,7 @@ function viewHTML(m){
 function pickHTML(){
   const list=sortedMembers();
   return `<div class="shead" style="grid-template-columns:minmax(0,1fr) auto"><h2>Add family to…</h2><button class="x" data-act="close" aria-label="Close">×</button></div>
-  ${list.length?`<div class="list">${list.map(x=>`<button class="row" style="grid-template-columns:auto minmax(0,1fr)" data-act="addFamily" data-id="${esc(x.id)}"><span class="avatar" aria-hidden="true">${esc(initials(x))}</span><span class="who"><b>${esc(fullName(x))}</b><span>${(x.family||[]).length} family member${(x.family||[]).length===1?'':'s'} saved</span></span></button>`).join('')}</div>`:'<p class="sub">Add a member first, then you can add their family.</p>'}`;
+  ${list.length?`<div class="list">${list.map(x=>`<button class="row" style="grid-template-columns:auto minmax(0,1fr)" data-act="addFamily" data-id="${esc(x.id)}">${avatarHTML(x)}<span class="who"><b>${esc(fullName(x))}</b><span>${(x.family||[]).length} family member${(x.family||[]).length===1?'':'s'} saved</span></span></button>`).join('')}</div>`:'<p class="sub">Add a member first, then you can add their family.</p>'}`;
 }
 
 const blankB=()=>({m:0,d:0,y:''});
@@ -1083,6 +1174,13 @@ function editHTML(m){
   const others=sortedMembers().filter(x=>x.id!==d.id);
   return `<div class="shead" style="grid-template-columns:minmax(0,1fr) auto"><h2>${m.isNew?'Add member':'Edit '+esc(fullName(d))}</h2><button class="x" data-act="cancelEdit" aria-label="Close">×</button></div>
   <form id="editForm" autocomplete="off" novalidate>
+  <div class="photo-upload">
+    <div class="photo-preview">${d._photo?'<img src="'+esc(d._photo)+'" alt="Photo">':esc(initials(d))}</div>
+    <div class="photo-acts">
+      <label class="btn small"><input type="file" accept="image/*" id="photoInput" style="display:none">${d._photo?'Change photo':'Add photo'}</label>
+      ${d._photo?'<button type="button" class="btn small danger" data-act="removePhoto">Remove</button>':''}
+    </div>
+  </div>
   <div class="grid2">
     <label class="field"><span>First name</span><input type="text" id="f-first" data-f="first" value="${esc(d.first)}"></label>
     <label class="field"><span>Last name</span><input type="text" data-f="last" value="${esc(d.last)}"></label>
@@ -1121,6 +1219,7 @@ async function saveDraft(){
     gender:d.gender||'',nationality:(d.nationality||'').trim(),dateBaptism:(d.dateBaptism||'').trim(),dateJoined:(d.dateJoined||'').trim(),socialMedia:(d.socialMedia||[]).filter(sm=>sm.handle&&sm.handle.trim()),
     family:d.family.filter(f=>f.linkId||f.name.trim()).map(f=>{const lm=f.linkId&&byId(f.linkId);return {rel:f.rel,linkId:f.linkId||'',name:lm?fullName(lm):f.name.trim(),birthday:f.linkId?{m:0,d:0}:cleanBirthday(f.birthday)}})};
   if(d.sample)rec.sample=true;
+  if(d._photo)rec._photo=d._photo;
   try{await putMember(rec);S.modal={type:'view',id:rec.id};render();toast('Saved '+fullName(rec))}
   catch(e){m.err='Could not save. Check that you have edit access to the spreadsheet.';renderModal()}
 }
@@ -1171,6 +1270,7 @@ document.addEventListener('click',async e=>{
   else if(act==='addSm'){const d=S.modal.draft;if(!d.socialMedia)d.socialMedia=[];d.socialMedia.push({platform:'Facebook',handle:''});renderModal()}
   else if(act==='addFamRow'){const d=S.modal.draft;d.family.push(blankFam());S.modal.focus='#fam-name-'+(d.family.length-1);renderModal()}
   else if(act==='delFam'){S.modal.draft.family.splice(+el.dataset.i,1);renderModal()}
+  else if(act==='removePhoto'){S.modal.draft._photo='';renderModal()}
   else if(act==='sample'){await loadSamples()}
   else if(act==='sort'){S.sort=el.dataset.v;render()}
   else if(act==='filterMin'){S.view='directory';S.fMin=el.dataset.name;S.q='';S.fStatus='';render();window.scrollTo(0,0)}
@@ -1209,6 +1309,24 @@ document.addEventListener('change',e=>{
   if(t.id==='fFamily'){S.fFamily=t.value;renderList();return}
   if(t.id==='incFam'){S.incFam=t.checked;render();return}
   if(t.id==='setChurch'){S.settings.church=t.value.trim()||'Cornerstone';putSettings().then(()=>toast('Church name saved')).catch(()=>toast('Could not save. Check that you have edit access to the spreadsheet.'));return}
+  if(t.id==='photoInput'){
+    const file=t.files&&t.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=function(){
+      const img=new Image();
+      img.onload=function(){
+        const max=120,w=img.width,h=img.height;
+        let nw=w,nh=h;
+        if(w>max||h>max){if(w>h){nw=max;nh=Math.round(h*max/w)}else{nh=max;nw=Math.round(w*max/h)}}
+        const c=document.createElement('canvas');c.width=nw;c.height=nh;
+        c.getContext('2d').drawImage(img,0,0,nw,nh);
+        const data=c.toDataURL('image/jpeg',0.7);
+        if(S.modal&&S.modal.draft){S.modal.draft._photo=data;renderModal()}
+      };
+      img.src=reader.result;
+    };
+    reader.readAsDataURL(file);return;
+  }
   const m=S.modal;if(!m||m.type!=='edit')return;
   if(t.dataset.struct&&t.dataset.fam!==undefined){
     const f=m.draft.family[+t.dataset.fam];f.linkId=t.value;
