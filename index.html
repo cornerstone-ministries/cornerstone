@@ -83,8 +83,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent)}
 .row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:12px 14px;width:100%}
 .row:last-child{border-bottom:0}
 .row:hover{background:var(--accent-soft)}
-.avatar{width:40px;height:40px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700;font-family:var(--display);font-size:15px;flex:none}
-.avatar.lg{width:52px;height:52px;font-size:18px}
+.avatar{width:48px;height:48px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700;font-family:var(--display);font-size:17px;flex:none}
+.avatar.lg{width:88px;height:88px;font-size:30px}
 .who{min-width:0}
 .who b{display:block;font-weight:600;overflow-wrap:anywhere}
 .who span{display:block;color:var(--muted);font-size:13px;overflow-wrap:anywhere}
@@ -316,7 +316,6 @@ input[type=date],input[type=month]{width:100%;min-width:0;background:var(--surfa
 /* badge */
 .badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;text-transform:uppercase;letter-spacing:.04em}
 .badge.inactive{background:var(--danger-soft);color:var(--danger)}
-.badge.transferred{background:var(--gold-soft);color:var(--gold)}
 /* sort buttons */
 .sort-bar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
 .sort-btn{font-size:12px;font-weight:600;padding:4px 10px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer}
@@ -402,7 +401,7 @@ html{scroll-behavior:smooth}
 .avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
 .avatar.lg img{width:100%;height:100%;object-fit:cover;border-radius:50%}
 .photo-upload{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:14px}
-.photo-preview{width:80px;height:80px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700;font-size:28px;overflow:hidden;border:2px solid var(--line)}
+.photo-preview{width:120px;height:120px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700;font-size:38px;overflow:hidden;border:2px solid var(--line)}
 .photo-preview img{width:100%;height:100%;object-fit:cover}
 .photo-acts{display:flex;gap:8px;flex-wrap:wrap}
 .photo-acts .btn{padding:5px 10px;font-size:12px}
@@ -430,7 +429,7 @@ html{scroll-behavior:smooth}
 const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const MS=MONTHS.map(m=>m.slice(0,3));
 const REL=['Spouse','Child','Parent','Sibling','Grandparent','Grandchild','Other'];
-const STATUS=['Member','Regular attendee','Visitor','Inactive','Transferred'];
+const STATUS=['Member','Regular attendee','Visitor','Inactive'];
 const GENDERS=['Male','Female'];
 const SM_PLATFORMS=['Facebook','Instagram','Twitter/X','TikTok','YouTube','Other'];
 const DEFAULT_MIN=['Worship Team','Ushering','Youth','Children','Prayer','Media','Hospitality',"Men's Fellowship","Women's Fellowship",'Outreach'];
@@ -710,7 +709,6 @@ function atStatCard(name,s,cls){
 function attFilteredMembers(){
   var q=ACS.q.trim().toLowerCase();
   return sortedMembers().filter(function(m){
-    if(m.status==='Transferred')return false;
     if(ACS.fMin&&!(m.ministries||[]).includes(ACS.fMin))return false;
     if(ACS.fStatus&&m.status!==ACS.fStatus)return false;
     if(!q)return true;
@@ -766,7 +764,7 @@ function attendanceHTML(){
    +(S.members.length?'<details class="checklist" id="attChecklist" open><summary class="lbl">Member checklist <span class="cl-count">'+AF.cl.length+' checked</span></summary>'
    +'<div class="cl-toolbar"><input type="search" id="acsQ" placeholder="Search members…" value="'+esc(ACS.q)+'" aria-label="Search members">'
    +'<select id="acsFMin" aria-label="Filter by ministry"><option value="">All ministries</option>'+allMinistries().map(function(x){return '<option '+(ACS.fMin===x?'selected':'')+'>'+esc(x)+'</option>'}).join('')+'</select>'
-   +'<select id="acsFStatus" aria-label="Filter by status"><option value="">All statuses</option>'+STATUS.filter(function(x){return x!=='Transferred'}).map(function(x){return '<option '+(ACS.fStatus===x?'selected':'')+'>'+x+'</option>'}).join('')+'</select>'
+   +'<select id="acsFStatus" aria-label="Filter by status"><option value="">All statuses</option>'+STATUS.map(function(x){return '<option '+(ACS.fStatus===x?'selected':'')+'>'+x+'</option>'}).join('')+'</select>'
    +'<button type="button" class="btn small" data-att="checkAll">Check all visible</button>'
    +'<button type="button" class="btn small" data-att="uncheckAll">Uncheck all</button></div>'
    +'<div class="cl-rows" id="clRows">'+attFilteredMembers().map(function(m){return '<label class="cl-row"><input type="checkbox" data-cl="'+esc(m.id)+'" '+(AF.cl.indexOf(m.id)>=0?'checked':'')+'><span>'+esc(fullName(m))+'</span><small style="color:var(--muted);font-size:11px;margin-left:auto">'+esc((m.ministries||[]).slice(0,2).join(', '))+'</small></label>'}).join('')+'</div></details>'
@@ -1050,9 +1048,8 @@ function pieSvg(data,title){
 }
 function demographicsHTML(){
   if(!S.members.length)return emptyHTML();
-  var active=S.members.filter(function(m){return m.status!=='Inactive'&&m.status!=='Transferred'});
+  var active=S.members.filter(function(m){return m.status!=='Inactive'});
   var inactive=S.members.filter(function(m){return m.status==='Inactive'}).length;
-  var transferred=S.members.filter(function(m){return m.status==='Transferred'}).length;
   // Gender
   var gc={};S.members.forEach(function(m){if(m.gender){gc[m.gender]=(gc[m.gender]||0)+1}});
   var gd=Object.keys(gc).map(function(k){return {l:k,v:gc[k]}});
@@ -1070,7 +1067,7 @@ function demographicsHTML(){
   var mc={};S.members.forEach(function(m){(m.ministries||[]).forEach(function(n){mc[n]=(mc[n]||0)+1})});
   var md=Object.keys(mc).map(function(k){return {l:k,v:mc[k]}}).sort(function(a,b){return b.v-a.v});
   return '<div class="bhead"><div><h2>Demographics</h2><p class="sub">Church-wide statistics and breakdowns &mdash; '+S.members.length+' total members</p></div></div>'
-    +'<div class="dash-stats"><div class="dash-stat"><b>'+active.length+'</b><span>Active</span></div><div class="dash-stat"><b>'+inactive+'</b><span>Inactive</span></div><div class="dash-stat"><b>'+transferred+'</b><span>Transferred</span></div></div>'
+    +'<div class="dash-stats"><div class="dash-stat"><b>'+active.length+'</b><span>Active</span></div><div class="dash-stat"><b>'+inactive+'</b><span>Inactive</span></div></div>'
     +'<div class="demo-grid">'+pieSvg(gd,'Gender')+pieSvg(ad,'Age Groups')+pieSvg(nd,'Nationality')+pieSvg(sd,'Status')+pieSvg(md,'Ministry Participation')+'</div>';
 }
 
@@ -1127,7 +1124,7 @@ function viewHTML(m){
   const x=byId(m.id);if(!x)return '<p class="loading">This member is no longer in the list.</p><div class="foot"><button class="btn" data-act="close">Close</button></div>';
   let age='';
   if(validB(x.birthday)&&x.birthday.y){age=' · turns '+(nextYear(x.birthday.m,x.birthday.d)-x.birthday.y)+' on '+bText(x.birthday)}
-  const statusBadge=x.status==='Inactive'?' <span class="badge inactive">Inactive</span>':x.status==='Transferred'?' <span class="badge transferred">Transferred</span>':'';
+  const statusBadge=x.status==='Inactive'?' <span class="badge inactive">Inactive</span>':'';
   const facts=[['Status',x.status],['Gender',x.gender],['Birthday',validB(x.birthday)?bText(x.birthday,true)+(x.birthday.y?'':' (year not saved)'):''],['Nationality',x.nationality],['Phone',x.phone],['Email',x.email],['Address',x.address],['Date of Baptism',dateStr(x.dateBaptism)],['Date Joined',dateStr(x.dateJoined)]].filter(r=>r[1]);
   const fam=(x.family||[]);
   return `<div class="shead">${avatarHTML(x,true)}
