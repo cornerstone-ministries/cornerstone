@@ -83,8 +83,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent)}
 .row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:12px 14px;width:100%}
 .row:last-child{border-bottom:0}
 .row:hover{background:var(--accent-soft)}
-.avatar{width:48px;height:48px;min-width:48px;min-height:48px;aspect-ratio:1/1;border-radius:50%;overflow:hidden;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700;font-family:var(--display);font-size:17px;flex:none}
-.avatar.lg{width:88px;height:88px;min-width:88px;min-height:88px;font-size:30px}
+.avatar{width:55px;height:55px;min-width:55px;min-height:55px;aspect-ratio:1/1;border-radius:50%;overflow:hidden;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700;font-family:var(--display);font-size:20px;flex:none}
+.avatar.lg{width:101px;height:101px;min-width:101px;min-height:101px;font-size:35px}
 .who{min-width:0}
 .who b{display:block;font-weight:600;overflow-wrap:anywhere}
 .who span{display:block;color:var(--muted);font-size:13px;overflow-wrap:anywhere}
@@ -400,10 +400,14 @@ html{scroll-behavior:smooth}
 /* profile picture */
 .avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
 .avatar.lg img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-.photo-upload{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:14px}
-.photo-preview{width:120px;height:120px;min-width:120px;min-height:120px;aspect-ratio:1/1;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700;font-size:38px;overflow:hidden;border:2px solid var(--line)}
-.photo-preview img{width:100%;height:100%;object-fit:cover}
-.photo-acts{display:flex;gap:8px;flex-wrap:wrap}
+.photo-upload{display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:14px}
+.photo-preview{width:138px;height:138px;min-width:138px;min-height:138px;aspect-ratio:1/1;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700;font-size:44px;overflow:hidden;border:2px solid var(--line);position:relative;touch-action:none;cursor:grab;user-select:none}
+.photo-preview.dragging{cursor:grabbing}
+.photo-preview img{width:100%;height:100%;object-fit:cover;pointer-events:none;-webkit-user-drag:none}
+.photo-hint{font-size:11px;color:var(--muted);text-align:center}
+.photo-zoom{display:flex;align-items:center;gap:8px;width:100%;max-width:220px}
+.photo-zoom input[type=range]{flex:1}
+.photo-acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 .photo-acts .btn{padding:5px 10px;font-size:12px}
 </style>
 </head>
@@ -447,7 +451,10 @@ const byId=id=>S.members.find(m=>m.id===id);
 const fullName=m=>((m&&m.first||'')+' '+(m&&m.last||'')).trim()||'Unnamed';
 const initials=m=>((m.first||'?')[0]+(m.last||'')[0]||'').toUpperCase();
 function memberPhoto(m){return m&&m._photo||''}
-function avatarHTML(m,lg){var cls=lg?'avatar lg':'avatar';var ph=memberPhoto(m);if(ph)return '<span class="'+cls+'" aria-hidden="true"><img src="'+esc(ph)+'" alt="'+esc(fullName(m))+'"></span>';return '<span class="'+cls+'" aria-hidden="true">'+esc(initials(m))+'</span>'}
+function photoPos(m){var p=m&&m._photoPos;return {x:p&&p.x!=null?p.x:50,y:p&&p.y!=null?p.y:50}}
+function photoZoom(m){var z=m&&m._photoZoom;return z&&z>0?z:1}
+function photoImgStyle(m){var p=photoPos(m),z=photoZoom(m);return 'object-position:'+p.x+'% '+p.y+'%;transform:scale('+z+')'}
+function avatarHTML(m,lg){var cls=lg?'avatar lg':'avatar';var ph=memberPhoto(m);if(ph)return '<span class="'+cls+'" aria-hidden="true"><img src="'+esc(ph)+'" alt="'+esc(fullName(m))+'" style="'+photoImgStyle(m)+'"></span>';return '<span class="'+cls+'" aria-hidden="true">'+esc(initials(m))+'</span>'}
 const validB=b=>b&&b.m>0&&b.d>0;
 const leap=y=>y%4===0&&(y%100!==0||y%400===0);
 const today=()=>{const t=new Date();return new Date(t.getFullYear(),t.getMonth(),t.getDate())};
@@ -1173,10 +1180,11 @@ function editHTML(m){
   return `<div class="shead" style="grid-template-columns:minmax(0,1fr) auto"><h2>${m.isNew?'Add member':'Edit '+esc(fullName(d))}</h2><button class="x" data-act="cancelEdit" aria-label="Close">×</button></div>
   <form id="editForm" autocomplete="off" novalidate>
   <div class="photo-upload">
-    <div class="photo-preview">${d._photo?'<img src="'+esc(d._photo)+'" alt="Photo">':esc(initials(d))}</div>
+    <div class="photo-preview" id="photoPreview">${d._photo?'<img id="photoPreviewImg" src="'+esc(d._photo)+'" alt="Photo" style="'+photoImgStyle(d)+'">':esc(initials(d))}</div>
+    ${d._photo?'<p class="photo-hint">Drag the photo to reposition it</p><div class="photo-zoom"><span class="sub" style="font-size:11px">Zoom</span><input type="range" id="photoZoom" min="100" max="250" step="5" value="'+Math.round(photoZoom(d)*100)+'" aria-label="Zoom photo"></div>':''}
     <div class="photo-acts">
       <label class="btn small"><input type="file" accept="image/*" id="photoInput" style="display:none">${d._photo?'Change photo':'Add photo'}</label>
-      ${d._photo?'<button type="button" class="btn small danger" data-act="removePhoto">Remove</button>':''}
+      ${d._photo?'<button type="button" class="btn small" data-act="resetPhoto">Reset position</button><button type="button" class="btn small danger" data-act="removePhoto">Remove</button>':''}
     </div>
   </div>
   <div class="grid2">
@@ -1217,7 +1225,7 @@ async function saveDraft(){
     gender:d.gender||'',nationality:(d.nationality||'').trim(),dateBaptism:(d.dateBaptism||'').trim(),dateJoined:(d.dateJoined||'').trim(),socialMedia:(d.socialMedia||[]).filter(sm=>sm.handle&&sm.handle.trim()),
     family:d.family.filter(f=>f.linkId||f.name.trim()).map(f=>{const lm=f.linkId&&byId(f.linkId);return {rel:f.rel,linkId:f.linkId||'',name:lm?fullName(lm):f.name.trim(),birthday:f.linkId?{m:0,d:0}:cleanBirthday(f.birthday)}})};
   if(d.sample)rec.sample=true;
-  if(d._photo)rec._photo=d._photo;
+  if(d._photo){rec._photo=d._photo;rec._photoZoom=photoZoom(d);rec._photoPos=photoPos(d)}
   try{await putMember(rec);S.modal={type:'view',id:rec.id};render();toast('Saved '+fullName(rec))}
   catch(e){m.err='Could not save. Check that you have edit access to the spreadsheet.';renderModal()}
 }
@@ -1268,7 +1276,8 @@ document.addEventListener('click',async e=>{
   else if(act==='addSm'){const d=S.modal.draft;if(!d.socialMedia)d.socialMedia=[];d.socialMedia.push({platform:'Facebook',handle:''});renderModal()}
   else if(act==='addFamRow'){const d=S.modal.draft;d.family.push(blankFam());S.modal.focus='#fam-name-'+(d.family.length-1);renderModal()}
   else if(act==='delFam'){S.modal.draft.family.splice(+el.dataset.i,1);renderModal()}
-  else if(act==='removePhoto'){S.modal.draft._photo='';renderModal()}
+  else if(act==='removePhoto'){S.modal.draft._photo='';S.modal.draft._photoZoom=1;S.modal.draft._photoPos={x:50,y:50};renderModal()}
+  else if(act==='resetPhoto'){S.modal.draft._photoZoom=1;S.modal.draft._photoPos={x:50,y:50};renderModal()}
   else if(act==='sample'){await loadSamples()}
   else if(act==='sort'){S.sort=el.dataset.v;render()}
   else if(act==='filterMin'){S.view='directory';S.fMin=el.dataset.name;S.q='';S.fStatus='';render();window.scrollTo(0,0)}
@@ -1295,11 +1304,42 @@ document.addEventListener('input',e=>{
   if(t.id==='q'){S.q=t.value;renderList();return}
   const m=S.modal;if(!m||m.type!=='edit')return;
   const d=m.draft;
+  if(t.id==='photoZoom'){
+    d._photoZoom=(+t.value||100)/100;
+    const img=$('#photoPreviewImg');if(img)img.style.transform='scale('+d._photoZoom+')';
+    return;
+  }
   if(t.dataset.f){d[t.dataset.f]=t.value}
   else if(t.dataset.b){const b=t.dataset.scope==='self'?d.birthday:d.family[+t.dataset.scope].birthday;const k=t.dataset.b;b[k]=k==='y'?t.value:+t.value}
   else if(t.dataset.fam!==undefined&&!t.dataset.struct){d.family[+t.dataset.fam][t.dataset.k]=t.value}
   else if(t.dataset.sm!==undefined){if(!d.socialMedia)d.socialMedia=[];var si=+t.dataset.sm;if(d.socialMedia[si])d.socialMedia[si][t.dataset.sk]=t.value}
 });
+/* drag to reposition the profile photo within its circular frame */
+var PDRAG=null;
+document.addEventListener('pointerdown',e=>{
+  const box=e.target.closest && e.target.closest('#photoPreview');
+  const m=S.modal;
+  if(!box||!m||m.type!=='edit'||!m.draft._photo)return;
+  const d=m.draft,pos=photoPos(d);
+  PDRAG={box:box,startX:e.clientX,startY:e.clientY,startPos:{x:pos.x,y:pos.y},zoom:photoZoom(d)};
+  box.classList.add('dragging');
+  try{box.setPointerCapture(e.pointerId)}catch(err){}
+  e.preventDefault();
+});
+document.addEventListener('pointermove',e=>{
+  if(!PDRAG)return;
+  const m=S.modal;if(!m||m.type!=='edit')return;
+  const d=m.draft,rect=PDRAG.box.getBoundingClientRect();
+  const dxPct=(e.clientX-PDRAG.startX)/rect.width*100/PDRAG.zoom;
+  const dyPct=(e.clientY-PDRAG.startY)/rect.height*100/PDRAG.zoom;
+  const nx=Math.max(0,Math.min(100,PDRAG.startPos.x-dxPct));
+  const ny=Math.max(0,Math.min(100,PDRAG.startPos.y-dyPct));
+  d._photoPos={x:Math.round(nx),y:Math.round(ny)};
+  const img=$('#photoPreviewImg');if(img)img.style.objectPosition=nx+'% '+ny+'%';
+});
+function endPhotoDrag(e){if(!PDRAG)return;try{PDRAG.box.releasePointerCapture(e.pointerId)}catch(err){}PDRAG.box.classList.remove('dragging');PDRAG=null}
+document.addEventListener('pointerup',endPhotoDrag);
+document.addEventListener('pointercancel',endPhotoDrag);
 document.addEventListener('change',e=>{
   const t=e.target;
   if(t.id==='fMin'){S.fMin=t.value;renderList();return}
@@ -1313,13 +1353,13 @@ document.addEventListener('change',e=>{
     reader.onload=function(){
       const img=new Image();
       img.onload=function(){
-        const max=120,w=img.width,h=img.height;
+        const max=260,w=img.width,h=img.height;
         let nw=w,nh=h;
         if(w>max||h>max){if(w>h){nw=max;nh=Math.round(h*max/w)}else{nh=max;nw=Math.round(w*max/h)}}
         const c=document.createElement('canvas');c.width=nw;c.height=nh;
         c.getContext('2d').drawImage(img,0,0,nw,nh);
         const data=c.toDataURL('image/jpeg',0.7);
-        if(S.modal&&S.modal.draft){S.modal.draft._photo=data;renderModal()}
+        if(S.modal&&S.modal.draft){S.modal.draft._photo=data;S.modal.draft._photoZoom=1;S.modal.draft._photoPos={x:50,y:50};renderModal()}
       };
       img.src=reader.result;
     };
