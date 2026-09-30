@@ -1402,12 +1402,22 @@ document.addEventListener('change',e=>{
     reader.onload=function(){
       const img=new Image();
       img.onload=function(){
-        const max=260,w=img.width,h=img.height;
-        let nw=w,nh=h;
-        if(w>max||h>max){if(w>h){nw=max;nh=Math.round(h*max/w)}else{nh=max;nw=Math.round(w*max/h)}}
-        const c=document.createElement('canvas');c.width=nw;c.height=nh;
-        c.getContext('2d').drawImage(img,0,0,nw,nh);
-        const data=c.toDataURL('image/jpeg',0.7);
+        // Pick the highest resolution/quality that still fits safely inside a
+        // Google Sheets cell (~50,000 char hard limit) alongside the rest of
+        // the member record. Try large+sharp first, step down only as needed.
+        const BUDGET=42000,w=img.width,h=img.height;
+        let data='';
+        for(let dim=1000;dim>=200 && !data;dim-=100){
+          let nw=w,nh=h;
+          if(w>dim||h>dim){if(w>h){nw=dim;nh=Math.round(h*dim/w)}else{nh=dim;nw=Math.round(w*dim/h)}}
+          const c=document.createElement('canvas');c.width=nw;c.height=nh;
+          c.getContext('2d').drawImage(img,0,0,nw,nh);
+          for(let q=0.92;q>=0.5;q-=0.07){
+            const cand=c.toDataURL('image/jpeg',q);
+            if(cand.length<=BUDGET){data=cand;break}
+          }
+          if(!data && dim<=200)data=c.toDataURL('image/jpeg',0.5);
+        }
         if(S.modal&&S.modal.draft){S.modal.draft._photo=data;S.modal.draft._photoZoom=1;S.modal.draft._photoPos={x:50,y:50};renderModal()}
       };
       img.src=reader.result;
