@@ -239,16 +239,19 @@ input[type=date],input[type=month]{width:100%;min-width:0;background:var(--surfa
 .alegend{fill:var(--ink);font-size:14px;font-weight:600}
 .aline{fill:none;stroke-width:2.6;stroke-linejoin:round}
 .aline.aS{stroke:var(--accent)}
-.aline.aP{stroke:var(--danger);stroke-dasharray:8 5}
+.aline.aP{stroke:#5b8def}
+.aline.aR{stroke:var(--danger);stroke-dasharray:8 5}
 .amk.aS{fill:var(--accent);stroke:var(--surface);stroke-width:1.5}
-.amk.aP{fill:var(--danger);stroke:var(--surface);stroke-width:1.5}
+.amk.aP{fill:#5b8def;stroke:var(--surface);stroke-width:1.5}
+.amk.aR{fill:var(--danger);stroke:var(--surface);stroke-width:1.5}
 .astats{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
 .astats .panel{margin-bottom:0}
 .astats+.panel{margin-top:16px}
 .astat h3{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px}
 .adot{width:11px;height:11px;display:inline-block}
 .adot.aS{background:var(--accent);border-radius:50%}
-.adot.aP{background:var(--danger)}
+.adot.aP{background:#5b8def}
+.adot.aR{background:var(--danger)}
 .astat dl{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;margin:0;font-size:14px}
 .astat dt{color:var(--muted)}
 .astat dd{margin:0;text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
@@ -282,12 +285,45 @@ input[type=date],input[type=month]{width:100%;min-width:0;background:var(--surfa
   .aline.aS{stroke:#0f5a2c!important}.aline.aP{stroke:#b01020!important}
   .amk.aS{fill:#0f5a2c!important;stroke:#fff!important}.amk.aP{fill:#b01020!important;stroke:#fff!important}
   .agrid,.aguide{stroke:#ccc!important}.aaxis,.atick{stroke:#333!important}
-  .adot.aS{background:#0f5a2c!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.adot.aP{background:#b01020!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .adot.aS{background:#0f5a2c!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.adot.aP{background:#4a7dd8!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.adot.aR{background:#b01020!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .atable tr{page-break-inside:avoid}
   .atable td,.atable th{border-bottom:1px solid #bbb!important}
   .achart{max-height:105mm}
 }
 .brandwrap{display:flex;align-items:center;background:#0f4d2a;padding:9px 16px;border-radius:12px}.logo{display:block;width:min(360px,60vw);height:auto}.attview{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+/* demographics */
+.demo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:18px}
+.demo-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px}
+.demo-card h3{margin:0 0 12px;font-size:16px}
+.pie-wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.pie-legend{display:flex;flex-direction:column;gap:4px;font-size:13px;min-width:0}
+.pie-legend span{display:flex;align-items:center;gap:6px;overflow-wrap:anywhere}
+.pie-swatch{width:12px;height:12px;border-radius:3px;flex:none}
+.demo-stat{font-size:36px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+/* member dashboard */
+.dash-head{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-bottom:16px}
+.dash-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px}
+.dash-stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center}
+.dash-stat b{display:block;font-size:28px;font-variant-numeric:tabular-nums;color:var(--accent)}
+.dash-stat span{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+/* checklist */
+.checklist{max-height:340px;overflow-y:auto;border:1px solid var(--line);border-radius:12px;margin:8px 0}
+.cl-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line)}
+.cl-row:last-child{border-bottom:0}
+.cl-row label{display:flex;align-items:center;gap:8px;flex:1;min-width:0;cursor:pointer}
+.cl-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);flex:none}
+.cl-count{font-size:13px;color:var(--muted);margin:4px 0 0}
+/* badge */
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;text-transform:uppercase;letter-spacing:.04em}
+.badge.inactive{background:var(--danger-soft);color:var(--danger)}
+.badge.transferred{background:var(--gold-soft);color:var(--gold)}
+/* sort buttons */
+.sort-bar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.sort-btn{font-size:12px;font-weight:600;padding:4px 10px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer}
+.sort-btn.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+/* social media in view */
+.sm-links{display:flex;flex-wrap:wrap;gap:8px}
+.sm-link{font-size:13px;color:var(--accent);font-weight:600}
 .vbtn{flex:1 1 170px;text-align:left;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer;font:inherit}
 .vbtn b{display:block;font-size:24px;font-variant-numeric:tabular-nums}
 .vbtn span{font-size:12.5px;color:var(--muted)}
@@ -372,11 +408,13 @@ html{scroll-behavior:smooth}
 const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const MS=MONTHS.map(m=>m.slice(0,3));
 const REL=['Spouse','Child','Parent','Sibling','Grandparent','Grandchild','Other'];
-const STATUS=['Member','Regular attendee','Visitor','Inactive'];
+const STATUS=['Member','Regular attendee','Visitor','Inactive','Transferred'];
+const GENDERS=['Male','Female'];
+const SM_PLATFORMS=['Facebook','Instagram','Twitter/X','TikTok','YouTube','Other'];
 const DEFAULT_MIN=['Worship Team','Ushering','Youth','Children','Prayer','Media','Hospitality',"Men's Fellowship","Women's Fellowship",'Outreach'];
 const LS_KEY='church-directory-v1';
 
-const S={members:[],settings:{church:'Cornerstone',ministries:DEFAULT_MIN.slice()},view:'directory',q:'',fMin:'',fStatus:'',incFam:true,modal:null,mode:'pending',loaded:false,confirmMin:'',canDl:false,err:''};
+const S={members:[],settings:{church:'Cornerstone',ministries:DEFAULT_MIN.slice()},view:'directory',q:'',fMin:'',fStatus:'',fFamily:'',sort:'alpha',incFam:true,modal:null,mode:'pending',loaded:false,confirmMin:'',canDl:false,err:''};
 let toastTimer=0;
 const dl=null; // CSV export is done from the sheet itself (File > Download)
 
@@ -394,9 +432,12 @@ function daysUntil(m,d){const t=today();let dt=mkDate(t.getFullYear(),m,d);if(dt
 function nextYear(m,d){const t=today();return mkDate(t.getFullYear(),m,d)<t?t.getFullYear()+1:t.getFullYear()}
 const bText=(b,withYear)=>validB(b)?MS[b.m-1]+' '+b.d+(withYear&&b.y?', '+b.y:''):'';
 const relDays=n=>n===0?'Today':n===1?'Tomorrow':'In '+n+' days';
-const sortedMembers=()=>S.members.slice().sort((a,b)=>(a.last||'').localeCompare(b.last||'')||(a.first||'').localeCompare(b.first||''));
+const sortedMembers=()=>{const arr=S.members.slice();if(S.sort==='family')return arr.sort((a,b)=>(a.last||'').localeCompare(b.last||'')||(a.first||'').localeCompare(b.first||''));if(S.sort==='ministry')return arr.sort((a,b)=>((a.ministries||[])[0]||'zzz').localeCompare((b.ministries||[])[0]||'zzz')||(a.last||'').localeCompare(b.last||''));if(S.sort==='recent')return arr.reverse();return arr.sort((a,b)=>{const na=(a.first||'')+' '+(a.last||''),nb=(b.first||'')+' '+(b.last||'');return na.localeCompare(nb)})};
 const famName=f=>{const m=f.linkId&&byId(f.linkId);return m?fullName(m):(f.name||'')};
 const allMinistries=()=>{const set=new Set(S.settings.ministries);S.members.forEach(m=>(m.ministries||[]).forEach(x=>set.add(x)));return [...set]};
+const allFamilies=()=>{const set=new Set();S.members.forEach(m=>{if(m.last)set.add(m.last)});return [...set].sort()};
+function memberAge(m){if(!validB(m.birthday)||!m.birthday.y)return null;const t=today();let a=t.getFullYear()-m.birthday.y;if(t.getMonth()+1<m.birthday.m||(t.getMonth()+1===m.birthday.m&&t.getDate()<m.birthday.d))a--;return a}
+function dateStr(d){if(!d)return '';if(typeof d==='string')return d;if(d.m&&d.d&&d.y)return MS[d.m-1]+' '+d.d+', '+d.y;return ''}
 
 function toast(msg){const el=$('#toast');el.textContent=msg;el.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>{el.hidden=true},2800)}
 
@@ -486,7 +527,7 @@ document.addEventListener('click',async function(e){
 });
 /* ---------- places: Cornerstone Main Limay / Other Missions-Churches ---------- */
 var LOCKEY='',LOCNAME='';
-var LOC_FNS={getAll:1,saveMember:1,deleteMember:1,saveSettings:1,getAttendance:1,saveAttendance:1,deleteAttendance:1};
+var LOC_FNS={getAll:1,saveMember:1,deleteMember:1,saveSettings:1,getAttendance:1,saveAttendance:1,deleteAttendance:1,getMemberAttendance:1};
 function churchIcon(px){
   return '<svg width="'+px+'" height="'+px+'" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M30 2h4v5h5v4h-5v4h-4v-4h-5V7h5z M32 16l11 12v12h13v20H8V40h13V28z M27 60V49a5 5 0 0 1 10 0v11z"/></svg>';
 }
@@ -543,8 +584,8 @@ document.addEventListener('click',function(e){
 /* ---------- attendance: record, graph, print ---------- */
 var ATT={rows:[],loaded:false,err:''};
 var AU={mode:'month',month:'',week:'',n:8,from:'',to:'',svc:'both',view:'members',edit:false,armed:''};
-var AF={d:'',s:'Sunday Service',n:'',v:'',note:''};
-var SVCS=['Sunday Service','Prayer Meeting'];
+var AF={d:'',s:'Sunday AM Service',n:'',v:'',note:'',cl:[]};
+var SVCS=['Sunday AM Service','Sunday PM Service','Prayer Meeting'];
 var DOWS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 function atVal(r){return AU.view==='visitors'?(r.v||0):AU.view==='total'?r.n+(r.v||0):r.n}
 function atViewName(){return AU.view==='visitors'?'Visitors only':AU.view==='total'?'Total attendance (members + visitors)':'Members / regular attendees'}
@@ -614,17 +655,21 @@ function atChart(rows,f,t){
   var lx=L;
   SVCS.forEach(function(s,i){
     var pts=rows.filter(function(r){return r.s===s}).sort(function(a,b){return a.d<b.d?-1:1});if(!pts.length)return;
-    var cls=i===0?'aS':'aP';
+    var cls=['aS','aP','aR'][i]||'aS';
     if(pts.length>1)o+='<path class="aline '+cls+'" d="'+pts.map(function(p,j){return (j?'L':'M')+X(p.d).toFixed(1)+' '+Y(p.n).toFixed(1)}).join(' ')+'"/>';
     pts.forEach(function(p){
       var x=X(p.d),yy=Y(p.n);
-      o+=i===0?'<circle class="amk '+cls+'" cx="'+x.toFixed(1)+'" cy="'+yy.toFixed(1)+'" r="5.5"/>':'<rect class="amk '+cls+'" x="'+(x-5).toFixed(1)+'" y="'+(yy-5).toFixed(1)+'" width="10" height="10"/>';
+      if(i===0)o+='<circle class="amk '+cls+'" cx="'+x.toFixed(1)+'" cy="'+yy.toFixed(1)+'" r="5.5"/>';
+      else if(i===1)o+='<rect class="amk '+cls+'" x="'+(x-5).toFixed(1)+'" y="'+(yy-5).toFixed(1)+'" width="10" height="10"/>';
+      else o+='<polygon class="amk '+cls+'" points="'+x.toFixed(1)+','+(yy-6).toFixed(1)+' '+(x+5.5).toFixed(1)+','+(yy+4).toFixed(1)+' '+(x-5.5).toFixed(1)+','+(yy+4).toFixed(1)+'"/>';
       o+='<text class="aval" x="'+x.toFixed(1)+'" y="'+(yy-12).toFixed(1)+'" text-anchor="middle">'+p.n+'</text>';
     });
     o+='<line class="aline '+cls+'" x1="'+lx+'" x2="'+(lx+30)+'" y1="24" y2="24"/>';
-    o+=i===0?'<circle class="amk lg '+cls+'" cx="'+(lx+15)+'" cy="24" r="5.5"/>':'<rect class="amk lg '+cls+'" x="'+(lx+10)+'" y="19" width="10" height="10"/>';
+    if(i===0)o+='<circle class="amk lg '+cls+'" cx="'+(lx+15)+'" cy="24" r="5.5"/>';
+    else if(i===1)o+='<rect class="amk lg '+cls+'" x="'+(lx+10)+'" y="19" width="10" height="10"/>';
+    else o+='<polygon class="amk lg '+cls+'" points="'+(lx+15)+',19 '+(lx+20.5)+',29 '+(lx+9.5)+',29"/>';
     o+='<text class="alegend" x="'+(lx+38)+'" y="29">'+s+'</text>';
-    lx+=190;
+    lx+=220;
   });
   return o+'</svg>';
 }
@@ -643,7 +688,7 @@ function attendanceHTML(){
   var crow=rows.map(function(r){return {d:r.d,s:r.s,n:atVal(r),m:r.n,v:r.v||0}}),st=atStats(crow),sm=0,sv=0,h='';rows.forEach(function(r){sm+=r.n;sv+=(r.v||0)});
   function opt(v,l,sel){return '<option value="'+esc(v)+'"'+(sel?' selected':'')+'>'+esc(l)+'</option>'}
   h+='<div class="printonly atprinthead"><div class="atbanner"><img src="'+logoSrc()+'" alt=""></div><h1>'+esc(LOCNAME)+'</h1><h2>Attendance Report</h2>'
-   +'<p><b>Period:</b> '+esc(rg.label)+' &nbsp;&middot;&nbsp; <b>Showing:</b> '+atViewName()+' &nbsp;&middot;&nbsp; <b>Services:</b> '+(AU.svc==='both'?'Sunday Service and Prayer Meeting':esc(AU.svc))+'</p>'
+   +'<p><b>Period:</b> '+esc(rg.label)+' &nbsp;&middot;&nbsp; <b>Showing:</b> '+atViewName()+' &nbsp;&middot;&nbsp; <b>Services:</b> '+(AU.svc==='both'?SVCS.join(', '):esc(AU.svc))+'</p>'
    +'<p><b>Totals for the period:</b> Members / regulars '+sm+' &middot; Visitors '+sv+' &middot; Total '+(sm+sv)+'</p><p class="atsmall">Printed '+esc(new Date().toLocaleString())+(ME?' by '+esc(ME.name):'')+'</p></div>';
   h+='<div class="bhead noprint"><div><h2>Attendance</h2><p class="sub">Sunday services and prayer meetings &mdash; '+esc(rg.label)+'</p></div>'
    +'<div class="acts"><button class="btn primary" type="button" data-att="print">Print / Save as PDF</button></div></div>';
@@ -653,13 +698,13 @@ function attendanceHTML(){
   else if(AU.mode==='week')h+='<div class="attnav"><button class="btn small" type="button" data-att="prev" aria-label="Previous week">&lsaquo;</button><label class="field"><span>Any date in the week (Sun&ndash;Sat)</span><input type="date" data-ac="week" value="'+esc(AU.week||cur)+'"></label><button class="btn small" type="button" data-att="next" aria-label="Next week">&rsaquo;</button></div>';
   else if(AU.mode==='last')h+='<label class="field"><span>Weeks</span><select data-ac="n">'+[4,8,12,26,52].map(function(n){return opt(n,n+' weeks',AU.n===n)}).join('')+'</select></label>';
   else h+='<label class="field"><span>From</span><input type="date" data-ac="from" value="'+esc(rg.f)+'"></label><label class="field"><span>To</span><input type="date" data-ac="to" value="'+esc(rg.t)+'"></label>';
-  h+='<label class="field"><span>Service</span><select data-ac="svc">'+opt('both','Both services',AU.svc==='both')+opt('Sunday Service','Sunday Service',AU.svc==='Sunday Service')+opt('Prayer Meeting','Prayer Meeting',AU.svc==='Prayer Meeting')+'</select></label></div></div>';
+  h+='<label class="field"><span>Service</span><select data-ac="svc">'+opt('both','All services',AU.svc==='both')+SVCS.map(function(s){return opt(s,s,AU.svc===s)}).join('')+'</select></label></div></div>';
   function vbtn(k,label,val){return '<button type="button" class="vbtn'+(AU.view===k?' on':'')+'" data-att="view" data-v="'+k+'" aria-pressed="'+(AU.view===k)+'"><span>'+label+'</span><b>'+val+'</b></button>'}
   h+='<div class="attview noprint">'+vbtn('total','Total attendance',sm+sv)+vbtn('members','Members / regular attendees',sm)+vbtn('visitors','Visitors only',sv)+'</div>';
   h+='<div class="panel attwrap"><p class="attcap">Graph shows: '+esc(atViewName())+'</p>'+atChart(crow,rg.f,rg.t)+'</div>';
   if(rows.length){
     h+='<div class="astats">';
-    SVCS.forEach(function(s,i){if(st[s])h+=atStatCard(s,st[s],i===0?'aS':'aP')});
+    SVCS.forEach(function(s,i){if(st[s])h+=atStatCard(s,st[s],['aS','aP','aR'][i]||'aS')});
     h+='</div>';
     h+='<div class="panel"><h3>Records</h3><div class="tscroll"><table class="atable"><thead><tr><th>Date</th><th>Service</th><th class="num">Members / regulars</th><th class="num">Visitors</th><th class="num">Total</th><th>Notes</th><th class="noprint"></th></tr></thead><tbody>';
     rows.forEach(function(r){
@@ -671,11 +716,13 @@ function attendanceHTML(){
   }
   h+='<form class="panel noprint" id="attForm"><h3>'+(AU.edit?'Edit attendance':'Record attendance')+'</h3><div class="arec">'
    +'<label class="field"><span>Date</span><input type="date" id="afD" value="'+esc(AF.d)+'" required></label>'
-   +'<label class="field"><span>Service</span><select id="afS">'+opt('Sunday Service','Sunday Service',AF.s==='Sunday Service')+opt('Prayer Meeting','Prayer Meeting',AF.s==='Prayer Meeting')+'</select></label>'
+   +'<label class="field"><span>Service</span><select id="afS">'+SVCS.map(function(sv){return opt(sv,sv,AF.s===sv)}).join('')+'</select></label>'
    +'<label class="field"><span>Members / regular attendees</span><input type="number" id="afN" min="0" step="1" inputmode="numeric" value="'+esc(AF.n)+'" placeholder="Number of people" required></label>'
    +'<label class="field"><span>Visitors</span><input type="number" id="afV" min="0" step="1" inputmode="numeric" value="'+esc(AF.v)+'" placeholder="0"></label>'
    +'<label class="field"><span>Notes (optional)</span><input type="text" id="afNote" maxlength="300" value="'+esc(AF.note)+'"></label>'
    +'<div class="arecbtn"><button class="btn primary" type="submit">'+(AU.edit?'Save changes':'Save')+'</button>'+(AU.edit?' <button class="btn" type="button" data-att="cancel">Cancel</button>':'')+'</div></div>'
+   +(S.members.length?'<details class="checklist"><summary class="lbl">Member checklist <span class="cl-count">'+AF.cl.length+' checked</span></summary><div class="cl-rows">'
+   +sortedMembers().filter(function(m){return m.status!=='Transferred'}).map(function(m){return '<label class="cl-row"><input type="checkbox" data-cl="'+esc(m.id)+'" '+(AF.cl.indexOf(m.id)>=0?'checked':'')+'>'+esc(fullName(m))+'</label>'}).join('')+'</div></details>':'')
    +'<p class="sub">Saving the same date and service again replaces the earlier number. To keep a soft copy, choose &ldquo;Save as PDF&rdquo; when printing.</p></form>';
   return h;
 }
@@ -683,6 +730,24 @@ async function loadAtt(){
   try{ATT.rows=JSON.parse(await gs('getAttendance'));ATT.loaded=true;ATT.err=''}
   catch(e){ATT.err=errText(e)}
   if(S.view==='attendance')render();
+  checkAutoInactive();
+}
+function checkAutoInactive(){
+  if(!ATT.loaded||!ATT.rows.length||!S.members.length)return;
+  // Get last 3 Sundays with attendance
+  var sundays=[],seen={};
+  ATT.rows.slice().sort(function(a,b){return a.d>b.d?-1:1}).forEach(function(r){if(!seen[r.d]){seen[r.d]=true;sundays.push(r.d)}});
+  if(sundays.length<3)return;
+  var last3=sundays.slice(0,3);
+  // Build set of member IDs who attended any of the last 3 recorded dates (via checklist)
+  var attended=new Set();
+  ATT.rows.forEach(function(r){if(last3.indexOf(r.d)>=0&&r.cl){r.cl.split(',').forEach(function(id){if(id)attended.add(id)})}});
+  if(!attended.size)return; // no checklist data
+  S.members.forEach(function(m){
+    if(m.status==='Member'||m.status==='Regular attendee'){
+      if(!attended.has(m.id)){m._autoInactive=true}else{m._autoInactive=false}
+    }
+  });
 }
 document.addEventListener('change',function(e){
   var t=e.target,k=t.dataset&&t.dataset.ac;
@@ -691,6 +756,7 @@ document.addEventListener('change',function(e){
 document.addEventListener('input',function(e){
   var id=e.target.id;
   if(id==='afD')AF.d=e.target.value;else if(id==='afS')AF.s=e.target.value;else if(id==='afN')AF.n=e.target.value;else if(id==='afV')AF.v=e.target.value;else if(id==='afNote')AF.note=e.target.value;
+  if(e.target.dataset&&e.target.dataset.cl){var mid=e.target.dataset.cl;if(e.target.checked){if(AF.cl.indexOf(mid)<0)AF.cl.push(mid)}else{AF.cl=AF.cl.filter(function(x){return x!==mid})}var cc=document.querySelector('.cl-count');if(cc)cc.textContent=AF.cl.length+' checked'}
 });
 document.addEventListener('change',function(e){
   var id=e.target.id;
@@ -709,7 +775,7 @@ document.addEventListener('click',async function(e){
   }
   if(a==='edit'){
     var r=ATT.rows.filter(function(x){return x.d===d&&x.s===s})[0];if(!r)return;
-    AF={d:r.d,s:r.s,n:String(r.n),v:String(r.v||0),note:r.note||''};AU.edit=true;render();
+    AF={d:r.d,s:r.s,n:String(r.n),v:String(r.v||0),note:r.note||'',cl:r.cl?r.cl.split(',').filter(Boolean):[]};AU.edit=true;render();
     var f=$('#attForm');if(f&&f.scrollIntoView)f.scrollIntoView({behavior:'smooth',block:'center'});return;
   }
   if(a==='cancel'){AU.edit=false;AF.n='';AF.v='';AF.note='';render();return}
@@ -729,12 +795,12 @@ document.addEventListener('submit',async function(e){
   if(n===''||isNaN(+n)||+n<0){toast('Please enter how many members / regular attendees');return}
   if(AF.v!==''&&(isNaN(+AF.v)||+AF.v<0)){toast('Please enter a valid number of visitors');return}
   try{
-    await gs('saveAttendance',JSON.stringify({d:d,s:s,n:+n,v:AF.v===''?0:+AF.v,note:AF.note}));
-    var rec={d:d,s:s,n:Math.round(+n),v:AF.v===''?0:Math.round(+AF.v),note:AF.note||''},i=-1;
+    await gs('saveAttendance',JSON.stringify({d:d,s:s,n:+n,v:AF.v===''?0:+AF.v,note:AF.note,cl:AF.cl.join(',')}));
+    var rec={d:d,s:s,n:Math.round(+n),v:AF.v===''?0:Math.round(+AF.v),note:AF.note||'',cl:AF.cl.join(',')},i=-1;
     ATT.rows.forEach(function(r,j){if(r.d===d&&r.s===s)i=j});
     if(i>=0)ATT.rows[i]=rec;else ATT.rows.push(rec);
     var rg=atRange();
-    AF.n='';AF.v='';AF.note='';AU.edit=false;render();
+    AF.n='';AF.v='';AF.note='';AF.cl=[];AU.edit=false;render();
     toast((d<rg.f||d>rg.t)?'Saved. That date is outside the period shown above.':'Saved');
   }catch(ex){toast(errText(ex))}
 });
@@ -745,7 +811,7 @@ function render(){
   document.title=(S.settings.church||'Church')+' Directory';
   const t=today(),cm=t.getMonth()+1;
   const bc=birthdayEvents().filter(e=>e.b.m===cm).length;
-  const tabs=[['directory','Directory',S.members.length],['birthdays','Birthdays',bc],['ministries','Ministries',0],['attendance','Attendance',0],['settings','Settings',0]];
+  const tabs=[['directory','Directory',S.members.length],['birthdays','Birthdays',bc],['ministries','Ministries',0],['attendance','Attendance',0],['demographics','Demographics',0],['settings','Settings',0]];
   $('#tabs').innerHTML=tabs.map(x=>`<button class="tab" data-act="tab" data-v="${x[0]}" ${S.view===x[0]?'aria-current="page"':''}>${x[1]}${x[2]?`<span class="n">${x[2]}</span>`:''}</button>`).join('');
   const app=$('#app');
   const fxKey=LOCKEY+'|'+S.view+'|'+S.loaded;
@@ -755,6 +821,8 @@ function render(){
   else if(S.view==='birthdays')app.innerHTML=birthdaysHTML();
   else if(S.view==='ministries')app.innerHTML=ministriesHTML();
   else if(S.view==='attendance')app.innerHTML=attendanceHTML();
+  else if(S.view==='demographics')app.innerHTML=demographicsHTML();
+  else if(S.view==='dashboard')app.innerHTML=dashboardHTML();
   else app.innerHTML=settingsHTML();
   renderModal();
 }
@@ -767,18 +835,27 @@ function emptyHTML(){
 
 function directoryHTML(){
   if(!S.members.length)return emptyHTML();
-  const mins=allMinistries();
+  const mins=allMinistries(),fams=allFamilies();
   return `<div class="toolbar">
     <div class="grow"><input type="search" id="q" placeholder="Search name, phone, ministry or family" value="${esc(S.q)}" aria-label="Search members"></div>
     <select id="fMin" aria-label="Filter by ministry"><option value="">All ministries</option>${mins.map(x=>`<option ${S.fMin===x?'selected':''}>${esc(x)}</option>`).join('')}</select>
     <select id="fStatus" aria-label="Filter by status"><option value="">All statuses</option>${STATUS.map(x=>`<option ${S.fStatus===x?'selected':''}>${x}</option>`).join('')}</select>
-  </div><p class="count" id="count"></p><div class="list" id="list"></div>`;
+    <select id="fFamily" aria-label="Filter by family"><option value="">All families</option>${fams.map(x=>`<option ${S.fFamily===x?'selected':''}>${esc(x)}</option>`).join('')}</select>
+  </div>
+  <div class="sort-bar"><span class="lbl">Sort:</span>
+    <button class="sort-btn${S.sort==='alpha'?' on':''}" data-act="sort" data-v="alpha">A–Z</button>
+    <button class="sort-btn${S.sort==='family'?' on':''}" data-act="sort" data-v="family">Family</button>
+    <button class="sort-btn${S.sort==='ministry'?' on':''}" data-act="sort" data-v="ministry">Ministry</button>
+    <button class="sort-btn${S.sort==='recent'?' on':''}" data-act="sort" data-v="recent">Recent</button>
+  </div>
+  <p class="count" id="count"></p><div class="list" id="list"></div>`;
 }
 function filtered(){
   const q=S.q.trim().toLowerCase();
   return sortedMembers().filter(m=>{
     if(S.fMin&&!(m.ministries||[]).includes(S.fMin))return false;
     if(S.fStatus&&m.status!==S.fStatus)return false;
+    if(S.fFamily&&m.last!==S.fFamily)return false;
     if(!q)return true;
     const hay=[fullName(m),m.phone,m.email,m.address,(m.ministries||[]).join(' '),(m.family||[]).map(famName).join(' ')].join(' ').toLowerCase();
     return hay.includes(q);
@@ -791,7 +868,8 @@ function renderList(){
   if(!rows.length){list.innerHTML='<p class="loading">No one matches that search.</p>';return}
   list.innerHTML=rows.map(m=>{
     const mins=m.ministries||[];
-    const meta=[m.status,m.phone].filter(Boolean).map(esc).join(' · ');
+    const statusLabel=m.status+(m._autoInactive?' (Auto-inactive)':'');
+    const meta=[statusLabel,m.phone].filter(Boolean).map(esc).join(' · ');
     return `<button class="row" data-act="open" data-id="${esc(m.id)}">
       <span class="avatar" aria-hidden="true">${esc(initials(m))}</span>
       <span class="who"><b>${esc(fullName(m))}${m.sample?' <span class="chip plain">Sample</span>':''}</b><span>${meta||'&nbsp;'}</span>
@@ -861,6 +939,70 @@ function ministriesHTML(){
     <div class="mgrid">${mins.map(x=>card(x,sortedMembers().filter(m=>(m.ministries||[]).includes(x)),false)).join('')}${card('Not in a ministry',none,true)}</div>`;
 }
 
+/* ---------- demographics ---------- */
+function pieSvg(data,title){
+  if(!data.length)return '<p class="sub">No data yet.</p>';
+  var colors=['#17703a','#5b8def','#c8202f','#f7a600','#8b5cf6','#ec4899','#14b8a6','#f97316','#6366f1','#84cc16'];
+  var total=0;data.forEach(function(d){total+=d.v});if(!total)return '<p class="sub">No data.</p>';
+  var cx=80,cy=80,r=70,a=-Math.PI/2,svg='<svg class="pie-svg" viewBox="0 0 160 160" width="160" height="160">';
+  data.forEach(function(d,i){
+    var slice=d.v/total*2*Math.PI;if(slice<0.01)return;
+    var x1=cx+r*Math.cos(a),y1=cy+r*Math.sin(a);
+    a+=slice;
+    var x2=cx+r*Math.cos(a),y2=cy+r*Math.sin(a);
+    var large=slice>Math.PI?1:0;
+    svg+='<path d="M'+cx+' '+cy+' L'+x1.toFixed(2)+' '+y1.toFixed(2)+' A'+r+' '+r+' 0 '+large+' 1 '+x2.toFixed(2)+' '+y2.toFixed(2)+' Z" fill="'+colors[i%colors.length]+'"/>';
+  });
+  svg+='</svg>';
+  var legend='<div class="pie-legend">'+data.map(function(d,i){return '<div><span class="pie-swatch" style="background:'+colors[i%colors.length]+'"></span>'+esc(d.l)+' <b>'+d.v+'</b> <span class="sub">('+Math.round(d.v/total*100)+'%)</span></div>'}).join('')+'</div>';
+  return '<div class="pie-wrap"><h3>'+esc(title)+'</h3><div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">'+svg+legend+'</div></div>';
+}
+function demographicsHTML(){
+  if(!S.members.length)return emptyHTML();
+  var active=S.members.filter(function(m){return m.status!=='Inactive'&&m.status!=='Transferred'});
+  var inactive=S.members.filter(function(m){return m.status==='Inactive'}).length;
+  var transferred=S.members.filter(function(m){return m.status==='Transferred'}).length;
+  // Gender
+  var gc={};S.members.forEach(function(m){if(m.gender){gc[m.gender]=(gc[m.gender]||0)+1}});
+  var gd=Object.keys(gc).map(function(k){return {l:k,v:gc[k]}});
+  // Age
+  var ages=[0,0,0,0,0,0];var ageLabels=['Under 13','13–17','18–25','26–40','41–60','Over 60'];
+  S.members.forEach(function(m){var a=memberAge(m);if(a===null)return;if(a<13)ages[0]++;else if(a<18)ages[1]++;else if(a<26)ages[2]++;else if(a<41)ages[3]++;else if(a<61)ages[4]++;else ages[5]++});
+  var ad=ageLabels.map(function(l,i){return {l:l,v:ages[i]}}).filter(function(d){return d.v>0});
+  // Nationality
+  var nc={};S.members.forEach(function(m){if(m.nationality){nc[m.nationality]=(nc[m.nationality]||0)+1}});
+  var nd=Object.keys(nc).map(function(k){return {l:k,v:nc[k]}}).sort(function(a,b){return b.v-a.v});
+  // Status
+  var sc={};S.members.forEach(function(m){sc[m.status]=(sc[m.status]||0)+1});
+  var sd=Object.keys(sc).map(function(k){return {l:k,v:sc[k]}});
+  // Ministry participation
+  var mc={};S.members.forEach(function(m){(m.ministries||[]).forEach(function(n){mc[n]=(mc[n]||0)+1})});
+  var md=Object.keys(mc).map(function(k){return {l:k,v:mc[k]}}).sort(function(a,b){return b.v-a.v});
+  return '<div class="bhead"><div><h2>Demographics</h2><p class="sub">Church-wide statistics and breakdowns &mdash; '+S.members.length+' total members</p></div></div>'
+    +'<div class="dash-stats"><div class="dash-stat"><b>'+active.length+'</b><span>Active</span></div><div class="dash-stat"><b>'+inactive+'</b><span>Inactive</span></div><div class="dash-stat"><b>'+transferred+'</b><span>Transferred</span></div></div>'
+    +'<div class="demo-grid">'+pieSvg(gd,'Gender')+pieSvg(ad,'Age Groups')+pieSvg(nd,'Nationality')+pieSvg(sd,'Status')+pieSvg(md,'Ministry Participation')+'</div>';
+}
+
+/* ---------- member dashboard ---------- */
+function dashboardHTML(){
+  var m=S.dashMember;if(!m)return '<p class="loading">No member selected.</p>';
+  var x=byId(m);if(!x)return '<p class="loading">Member not found.</p>';
+  var age=memberAge(x);
+  var attRows=[];
+  if(S.dashAtt)attRows=S.dashAtt;
+  var total=attRows.length;
+  var lastSvc=total?attRows.sort(function(a,b){return a.d>b.d?-1:1})[0]:'';
+  return '<div class="shead"><span class="avatar lg" aria-hidden="true">'+esc(initials(x))+'</span>'
+    +'<div><h2>'+esc(fullName(x))+'</h2><div class="sub">'+esc(x.status||'')+(age!==null?' · Age '+age:'')+'</div></div>'
+    +'<button class="btn small" data-act="closeDash">Back to Directory</button></div>'
+    +'<div class="dash-stats"><div class="dash-stat"><b>'+total+'</b><span>Services attended</span></div>'
+    +(lastSvc?'<div class="dash-stat"><b>'+esc(atFmt(lastSvc.d))+'</b><span>Last attendance</span></div>':'')
+    +'</div>'
+    +(attRows.length?'<div class="panel"><h3>Attendance History</h3><div class="tscroll"><table class="atable"><thead><tr><th>Date</th><th>Service</th></tr></thead><tbody>'
+    +attRows.map(function(r){return '<tr><td>'+esc(atLong(r.d))+'</td><td>'+esc(r.s)+'</td></tr>'}).join('')
+    +'</tbody></table></div></div>':'<p class="sub">No attendance records found for this member.</p>');
+}
+
 function settingsHTML(){
   const mins=S.settings.ministries;
   const samples=S.members.filter(m=>m.sample).length;
@@ -894,10 +1036,11 @@ function viewHTML(m){
   const x=byId(m.id);if(!x)return '<p class="loading">This member is no longer in the list.</p><div class="foot"><button class="btn" data-act="close">Close</button></div>';
   let age='';
   if(validB(x.birthday)&&x.birthday.y){age=' · turns '+(nextYear(x.birthday.m,x.birthday.d)-x.birthday.y)+' on '+bText(x.birthday)}
-  const facts=[['Status',x.status],['Birthday',validB(x.birthday)?bText(x.birthday,true)+(x.birthday.y?'':' (year not saved)'):''],['Phone',x.phone],['Email',x.email],['Address',x.address]].filter(r=>r[1]);
+  const statusBadge=x.status==='Inactive'?' <span class="badge inactive">Inactive</span>':x.status==='Transferred'?' <span class="badge transferred">Transferred</span>':'';
+  const facts=[['Status',x.status],['Gender',x.gender],['Birthday',validB(x.birthday)?bText(x.birthday,true)+(x.birthday.y?'':' (year not saved)'):''],['Nationality',x.nationality],['Phone',x.phone],['Email',x.email],['Address',x.address],['Date of Baptism',dateStr(x.dateBaptism)],['Date Joined',dateStr(x.dateJoined)]].filter(r=>r[1]);
   const fam=(x.family||[]);
   return `<div class="shead"><span class="avatar lg" aria-hidden="true">${esc(initials(x))}</span>
-    <div><h2>${esc(fullName(x))}</h2>${x.sample?'<span class="chip plain">Sample</span>':''}<div class="sub">${age?esc(age.slice(3)):''}</div></div>
+    <div><h2>${esc(fullName(x))}${statusBadge}</h2>${x.sample?'<span class="chip plain">Sample</span>':''}<div class="sub">${age?esc(age.slice(3)):''}</div></div>
     <button class="x" data-act="close" aria-label="Close">×</button></div>
   ${facts.length?`<dl class="facts">${facts.map(r=>`<dt>${r[0]}</dt><dd>${esc(r[1])}</dd>`).join('')}</dl>`:''}
   <div class="sec"><h3>Ministries</h3>${(x.ministries||[]).length?`<div class="chips" style="margin-top:0">${x.ministries.map(n=>`<span class="chip">${esc(n)}</span>`).join('')}</div>`:'<p class="sub">Not in a ministry yet.</p>'}</div>
@@ -905,10 +1048,11 @@ function viewHTML(m){
     const lm=f.linkId&&byId(f.linkId);const b=lm?lm.birthday:f.birthday;
     return `<li><span><span class="rel">${esc(f.rel||'Family')}</span><br>${lm?`<button class="btn link" data-act="open" data-id="${esc(lm.id)}">${esc(fullName(lm))}</button>`:esc(f.name||'Unnamed')}</span><span class="bd">${validB(b)?esc(bText(b,true)):''}</span></li>`}).join('')}</ul>`:'<p class="sub">No family added yet.</p>'}
     <div style="margin-top:10px"><button class="btn small" data-act="addFamily" data-id="${esc(x.id)}">Add family member</button></div></div>
+  ${(x.socialMedia||[]).length?`<div class="sec"><h3>Social Media</h3><div class="sm-links">${x.socialMedia.map(sm=>`<span class="sm-link"><b>${esc(sm.platform||'')}</b> ${esc(sm.handle||'')}</span>`).join('')}</div></div>`:''}
   ${x.notes?`<div class="sec"><h3>Notes</h3><p style="margin:0;white-space:pre-wrap;overflow-wrap:anywhere">${esc(x.notes)}</p></div>`:''}
   <div class="foot">${m.confirmDel
     ?`<span class="inline-confirm lead">Delete ${esc(fullName(x))} for good?</span><button class="btn" data-act="delNo">Keep</button><button class="btn danger solid" data-act="delYes">Delete</button>`
-    :`<button class="btn danger lead" data-act="delAsk">Delete</button><button class="btn" data-act="close">Close</button><button class="btn primary" data-act="edit" data-id="${esc(x.id)}">Edit</button>`}</div>`;
+    :`<button class="btn danger lead" data-act="delAsk">Delete</button><button class="btn" data-act="dashboard" data-id="${esc(x.id)}">Dashboard</button><button class="btn" data-act="close">Close</button><button class="btn primary" data-act="edit" data-id="${esc(x.id)}">Edit</button>`}</div>`;
 }
 function pickHTML(){
   const list=sortedMembers();
@@ -918,12 +1062,13 @@ function pickHTML(){
 
 const blankB=()=>({m:0,d:0,y:''});
 const blankFam=()=>({rel:'Spouse',linkId:'',name:'',birthday:blankB()});
-function newDraft(){return {id:uid('m'),first:'',last:'',status:'Member',phone:'',email:'',address:'',birthday:blankB(),ministries:[],notes:'',family:[]}}
+function newDraft(){return {id:uid('m'),first:'',last:'',status:'Member',phone:'',email:'',address:'',birthday:blankB(),ministries:[],notes:'',family:[],gender:'',nationality:'',dateBaptism:'',dateJoined:'',socialMedia:[]}}
 function draftFrom(x){
   const d=JSON.parse(JSON.stringify(x));
   d.birthday=Object.assign(blankB(),d.birthday||{});d.birthday.y=d.birthday.y||'';
   d.ministries=d.ministries||[];d.family=(d.family||[]).map(f=>Object.assign(blankFam(),f,{birthday:Object.assign(blankB(),f.birthday||{})}));
   d.family.forEach(f=>{f.birthday.y=f.birthday.y||''});
+  d.gender=d.gender||'';d.nationality=d.nationality||'';d.dateBaptism=d.dateBaptism||'';d.dateJoined=d.dateJoined||'';d.socialMedia=d.socialMedia||[];
   return d;
 }
 function bdayFields(b,scope){
@@ -942,11 +1087,20 @@ function editHTML(m){
     <label class="field"><span>First name</span><input type="text" id="f-first" data-f="first" value="${esc(d.first)}"></label>
     <label class="field"><span>Last name</span><input type="text" data-f="last" value="${esc(d.last)}"></label>
     <label class="field"><span>Status</span><select data-f="status">${STATUS.map(s=>`<option ${d.status===s?'selected':''}>${s}</option>`).join('')}</select></label>
+    <label class="field"><span>Gender</span><select data-f="gender"><option value="">—</option>${GENDERS.map(g=>`<option ${d.gender===g?'selected':''}>${g}</option>`).join('')}</select></label>
     <label class="field"><span>Phone</span><input type="tel" data-f="phone" value="${esc(d.phone)}"></label>
     <label class="field"><span>Email</span><input type="email" data-f="email" value="${esc(d.email)}"></label>
     <label class="field"><span>Address</span><input type="text" data-f="address" value="${esc(d.address)}"></label>
+    <label class="field"><span>Nationality</span><input type="text" data-f="nationality" value="${esc(d.nationality)}" placeholder="e.g. Filipino"></label>
   </div>
   <div class="field" style="margin-top:12px"><span>Birthday</span>${bdayFields(d.birthday,'self')}</div>
+  <div class="grid2" style="margin-top:12px">
+    <label class="field"><span>Date of Baptism</span><input type="text" data-f="dateBaptism" value="${esc(d.dateBaptism)}" placeholder="e.g. June 5, 2020"></label>
+    <label class="field"><span>Date Joined</span><input type="text" data-f="dateJoined" value="${esc(d.dateJoined)}" placeholder="e.g. January 2019"></label>
+  </div>
+  <div class="sec"><h3>Social Media</h3>
+    <div id="smSec">${(d.socialMedia||[]).map((sm,i)=>`<div class="grid2" style="margin-bottom:8px"><label class="field"><span>Platform</span><select data-sm="${i}" data-sk="platform">${SM_PLATFORMS.map(p=>`<option ${sm.platform===p?'selected':''}>${p}</option>`).join('')}</select></label><label class="field"><span>Handle / URL</span><input type="text" data-sm="${i}" data-sk="handle" value="${esc(sm.handle||'')}"></label></div>`).join('')}
+    <button type="button" class="btn small" data-act="addSm">+ Add social media</button></div>
   <div class="sec"><h3>Ministries</h3><div class="picks">${mins.map(n=>`<button type="button" class="pick" data-act="toggleMin" data-name="${esc(n)}" aria-pressed="${d.ministries.includes(n)}">${esc(n)}</button>`).join('')||'<span class="sub">Add ministries in Settings.</span>'}</div></div>
   <div class="sec" id="famSec"><h3>Family</h3>
     ${d.family.map((f,i)=>`<div class="famrow"><div class="top2"><label class="field" style="flex:1"><span>Relationship</span><select data-fam="${i}" data-k="rel">${REL.map(r=>`<option ${f.rel===r?'selected':''}>${r}</option>`).join('')}</select></label><button type="button" class="btn small danger" data-act="delFam" data-i="${i}">Remove</button></div>
@@ -964,6 +1118,7 @@ async function saveDraft(){
   if(!d.first.trim()&&!d.last.trim()){m.err='Enter a first or last name.';m.focus='#f-first';renderModal();return}
   if(bad(d.birthday)||d.family.some(f=>!f.linkId&&bad(f.birthday))){m.err='Choose both a month and a day for each birthday, or leave both empty.';renderModal();return}
   const rec={id:d.id,first:d.first.trim(),last:d.last.trim(),status:d.status,phone:d.phone.trim(),email:d.email.trim(),address:d.address.trim(),birthday:cleanBirthday(d.birthday),ministries:d.ministries.slice(),notes:d.notes.trim(),
+    gender:d.gender||'',nationality:(d.nationality||'').trim(),dateBaptism:(d.dateBaptism||'').trim(),dateJoined:(d.dateJoined||'').trim(),socialMedia:(d.socialMedia||[]).filter(sm=>sm.handle&&sm.handle.trim()),
     family:d.family.filter(f=>f.linkId||f.name.trim()).map(f=>{const lm=f.linkId&&byId(f.linkId);return {rel:f.rel,linkId:f.linkId||'',name:lm?fullName(lm):f.name.trim(),birthday:f.linkId?{m:0,d:0}:cleanBirthday(f.birthday)}})};
   if(d.sample)rec.sample=true;
   try{await putMember(rec);S.modal={type:'view',id:rec.id};render();toast('Saved '+fullName(rec))}
@@ -988,8 +1143,8 @@ async function loadSamples(){
 async function exportCsv(){
   if(!dl)return;
   const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
-  const rows=[['First name','Last name','Status','Phone','Email','Address','Birthday','Ministries','Family','Notes']];
-  sortedMembers().forEach(m=>rows.push([m.first,m.last,m.status,m.phone,m.email,m.address,bText(m.birthday,true),(m.ministries||[]).join('; '),(m.family||[]).map(f=>(f.rel||'')+': '+famName(f)).join('; '),m.notes]));
+  const rows=[['First name','Last name','Status','Gender','Phone','Email','Address','Birthday','Nationality','Date of Baptism','Date Joined','Ministries','Family','Social Media','Notes']];
+  sortedMembers().forEach(m=>rows.push([m.first,m.last,m.status,m.gender||'',m.phone,m.email,m.address,bText(m.birthday,true),m.nationality||'',dateStr(m.dateBaptism),dateStr(m.dateJoined),(m.ministries||[]).join('; '),(m.family||[]).map(f=>(f.rel||'')+': '+famName(f)).join('; '),(m.socialMedia||[]).map(sm=>(sm.platform||'')+': '+(sm.handle||'')).join('; '),m.notes]));
   try{await dl.save({filename:'church-members.csv',data:'\ufeff'+rows.map(r=>r.map(q).join(',')).join('\r\n')});toast('Export ready')}
   catch(e){if(!e||e.code!=='declined')toast('Could not export here.')}
 }
@@ -1002,6 +1157,8 @@ document.addEventListener('click',async e=>{
   if(act==='tab'){S.view=el.dataset.v;render();if(S.view==='attendance')loadAtt();window.scrollTo(0,0)}
   else if(act==='add'){S.modal={type:'edit',draft:newDraft(),isNew:true,focus:'#f-first'};renderModal()}
   else if(act==='open'){S.modal={type:'view',id};renderModal()}
+  else if(act==='dashboard'){S.modal=null;S.dashMember=id;S.dashAtt=null;S.view='dashboard';render();gs('getMemberAttendance',id).then(function(r){S.dashAtt=JSON.parse(r);if(S.view==='dashboard')render()}).catch(function(){S.dashAtt=[];if(S.view==='dashboard')render()})}
+  else if(act==='closeDash'){S.view='directory';render()}
   else if(act==='close'){S.modal=null;renderModal()}
   else if(act==='edit'){S.modal={type:'edit',draft:draftFrom(byId(id)),isNew:false};renderModal()}
   else if(act==='cancelEdit'){const m=S.modal;S.modal=m.isNew?null:{type:'view',id:m.draft.id};renderModal()}
@@ -1011,9 +1168,11 @@ document.addEventListener('click',async e=>{
   else if(act==='delNo'){S.modal.confirmDel=false;renderModal()}
   else if(act==='delYes'){const nm=fullName(byId(S.modal.id));try{await removeMember(S.modal.id);S.modal=null;render();toast('Deleted '+nm)}catch(err){toast('Could not delete. Check that you have edit access to the spreadsheet.')}}
   else if(act==='toggleMin'){const a=S.modal.draft.ministries,n=el.dataset.name,i=a.indexOf(n);if(i>=0)a.splice(i,1);else a.push(n);el.setAttribute('aria-pressed',String(i<0))}
+  else if(act==='addSm'){const d=S.modal.draft;if(!d.socialMedia)d.socialMedia=[];d.socialMedia.push({platform:'Facebook',handle:''});renderModal()}
   else if(act==='addFamRow'){const d=S.modal.draft;d.family.push(blankFam());S.modal.focus='#fam-name-'+(d.family.length-1);renderModal()}
   else if(act==='delFam'){S.modal.draft.family.splice(+el.dataset.i,1);renderModal()}
   else if(act==='sample'){await loadSamples()}
+  else if(act==='sort'){S.sort=el.dataset.v;render()}
   else if(act==='filterMin'){S.view='directory';S.fMin=el.dataset.name;S.q='';S.fStatus='';render();window.scrollTo(0,0)}
   else if(act==='copyMonth'){
     const txt=copyMonthText();if(!txt){toast('No birthdays this month');return}
@@ -1041,11 +1200,13 @@ document.addEventListener('input',e=>{
   if(t.dataset.f){d[t.dataset.f]=t.value}
   else if(t.dataset.b){const b=t.dataset.scope==='self'?d.birthday:d.family[+t.dataset.scope].birthday;const k=t.dataset.b;b[k]=k==='y'?t.value:+t.value}
   else if(t.dataset.fam!==undefined&&!t.dataset.struct){d.family[+t.dataset.fam][t.dataset.k]=t.value}
+  else if(t.dataset.sm!==undefined){if(!d.socialMedia)d.socialMedia=[];var si=+t.dataset.sm;if(d.socialMedia[si])d.socialMedia[si][t.dataset.sk]=t.value}
 });
 document.addEventListener('change',e=>{
   const t=e.target;
   if(t.id==='fMin'){S.fMin=t.value;renderList();return}
   if(t.id==='fStatus'){S.fStatus=t.value;renderList();return}
+  if(t.id==='fFamily'){S.fFamily=t.value;renderList();return}
   if(t.id==='incFam'){S.incFam=t.checked;render();return}
   if(t.id==='setChurch'){S.settings.church=t.value.trim()||'Cornerstone';putSettings().then(()=>toast('Church name saved')).catch(()=>toast('Could not save. Check that you have edit access to the spreadsheet.'));return}
   const m=S.modal;if(!m||m.type!=='edit')return;
